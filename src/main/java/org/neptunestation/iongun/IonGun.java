@@ -1,6 +1,8 @@
 package org.neptunestation.iongun;
 
 import java.io.*;
+import java.net.*;
+import java.sql.*;
 import java.util.*;
 import org.apache.commons.cli.*;
 
@@ -10,7 +12,98 @@ public class IonGun {
 	    for (String s : longOpts)
 		addOption(Option.builder(opt).longOpt(s).desc(description).hasArg(hasArg).build());
 	    return this;}}
+
+    public static class SqlURLStreamHandlerFactory implements URLStreamHandlerFactory {
+	@Override
+	public URLStreamHandler createURLStreamHandler (String protocol) {
+	    if (Arrays.asList("mysql",
+			      "mysqls",
+			      "mysqlssl").contains(protocol))
+		return new MySQLJDBCURLStreamHandler();
+	    if (Arrays.asList("oracle",
+			      "ora").contains(protocol))
+		return new OracleJDBCURLStreamHandler();
+	    if (Arrays.asList("postgresql",
+			      "pg",
+			      "pgsql",
+			      "postgres",
+			      "postgresqlssl",
+			      "pgs",
+			      "pgsqlssl",
+			      "postgresssl",
+			      "pgssl",
+			      "postgresqls",
+			      "pgsqls",
+			      "postgress").contains(protocol))
+		return new PostgresJDBCURLStreamHandler();
+	    if (Arrays.asList("sqlite",
+			      "sqlite2",
+			      "sqlite3").contains(protocol))
+		return new SQLiteJDBCURLStreamHandler();
+	    return null;}}
+
+    public static abstract class JDBCURLStreamHandler extends URLStreamHandler {
+	protected URL translate (URL url) {
+	    return url;}}
     
+    public static class MySQLJDBCURLStreamHandler extends JDBCURLStreamHandler {
+	@Override
+	protected URLConnection openConnection (URL url) throws IOException {
+	    return new JDBCURLConnection(url) {
+		@Override
+		protected Connection getConnection () throws SQLException {
+		    return null;}};}}
+    
+    public static class OracleJDBCURLStreamHandler extends JDBCURLStreamHandler {
+	@Override
+	protected URLConnection openConnection (URL url) throws IOException {
+	    return new JDBCURLConnection(url) {
+		@Override
+		protected Connection getConnection () {
+		    return null;}};}}
+    
+    public static class PostgresJDBCURLStreamHandler extends JDBCURLStreamHandler {
+	@Override
+	protected URLConnection openConnection (URL url) throws IOException {
+	    return new JDBCURLConnection(url) {
+		@Override
+		protected Connection getConnection () {
+		    return null;}};}}
+
+    public static class SQLiteJDBCURLStreamHandler extends JDBCURLStreamHandler {
+	@Override
+	protected URLConnection openConnection (URL url) throws IOException {
+	    return new JDBCURLConnection(url) {
+		protected Connection getConnection () throws SQLException {
+		    return DriverManager.getConnection(String.format("jdbc:sqlite:%s", url.getPath().split("/")[1]));}};}}
+
+    public static abstract class JDBCURLConnection extends URLConnection {
+	JDBCURLConnection (URL url) {
+	    super(url);}
+	@Override
+	public synchronized void connect () throws IOException {
+	    try (Connection c = getConnection()) {connected = true;}
+	    catch (Exception e) {throw new RuntimeException(e);}}
+	protected abstract Connection getConnection () throws SQLException;
+	@Override
+	public synchronized InputStream getInputStream () throws IOException {
+	    if (!connected) connect();
+	    PipedInputStream in = new PipedInputStream();
+	    PrintStream out = new PrintStream(new PipedOutputStream(in));
+	    new Thread(new Runnable () {
+		    public void run () {
+			try (Connection c = getConnection();
+			     Statement s = c.createStatement();
+			     ResultSet r = s.executeQuery(url.getQuery())) {
+			    for (Map<String, Util.SQLValue> p : Util.asIterable(r))
+				out.println(p.toString());
+			    out.close();}
+			catch (Exception e) {throw new RuntimeException(e);}}}).start();
+	    return in;}
+	@Override
+	public synchronized Object getContent () throws IOException {
+	    return null;}}
+
     public static void main (String[] args) {
 	CommandLineParser parser = new DefaultParser();
 	IonOptions options = new IonOptions();
@@ -37,8 +130,27 @@ public class IonGun {
 	f.setOptionComparator(null);
 	try {
 	    CommandLine line = parser.parse(options, args);
-	    if (line.hasOption("help")) f.printHelp("ion", options);}
-	catch (ParseException exp) {
-	    System.out.println("Unexpected exception:" + exp.getMessage());
-	    System.exit(1);}}}
+	    if (line.hasOption("help")) printHelp();
+	    URL.setURLStreamHandlerFactory(new SqlURLStreamHandlerFactory());
+	    String l;
+	    for (String s : line.getArgs()) {
+		BufferedReader br =
+		    new BufferedReader(new InputStreamReader(("sql".equalsIgnoreCase((new URL(s)).getProtocol()) ?
+							      new URL((new URL(s)).getFile()) : new URL(s))
+							     .openConnection()
+							     .getInputStream()));
+		while ((l = br.readLine())!=null)
+		    System.out.println(l);}}
+	catch (IOException e) {throw new RuntimeException(e);}
+	catch (ParseException e) {
+	    System.out.println("Unexpected exception:" + e.getMessage());
+	    System.exit(1);}}
+    
+    public static void printHelp () {
+	System.out.println("Error:\n" +
+			   "No DBURL given\n" +
+			   "\n" +
+			   "sql [-hnr] [--table-size] [--db-size] [-p pass-through] [-s string] dburl [command]\n" +
+			   "\n");}}
+
 
