@@ -1,4 +1,4 @@
-package org.neptunestation.iongun;
+package iongun.util;
 
 import java.lang.reflect.*;
 import java.sql.*;

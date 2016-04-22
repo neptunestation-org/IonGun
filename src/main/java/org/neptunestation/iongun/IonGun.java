@@ -1,5 +1,7 @@
 package org.neptunestation.iongun;
 
+import iongun.net.*;
+import iongun.util.*;
 import java.io.*;
 import java.net.*;
 import java.sql.*;
@@ -40,68 +42,6 @@ public class IonGun {
 			      "sqlite2",
 			      "sqlite3").contains(protocol))
 		return new SQLiteJDBCURLStreamHandler();
-	    return null;}}
-
-    public static abstract class JDBCURLStreamHandler extends URLStreamHandler {
-	protected URL translate (URL url) {
-	    return url;}}
-    
-    public static class MySQLJDBCURLStreamHandler extends JDBCURLStreamHandler {
-	@Override
-	protected URLConnection openConnection (URL url) throws IOException {
-	    return new JDBCURLConnection(url) {
-		@Override
-		protected Connection getConnection () throws SQLException {
-		    return null;}};}}
-    
-    public static class OracleJDBCURLStreamHandler extends JDBCURLStreamHandler {
-	@Override
-	protected URLConnection openConnection (URL url) throws IOException {
-	    return new JDBCURLConnection(url) {
-		@Override
-		protected Connection getConnection () {
-		    return null;}};}}
-    
-    public static class PostgresJDBCURLStreamHandler extends JDBCURLStreamHandler {
-	@Override
-	protected URLConnection openConnection (URL url) throws IOException {
-	    return new JDBCURLConnection(url) {
-		@Override
-		protected Connection getConnection () {
-		    return null;}};}}
-
-    public static class SQLiteJDBCURLStreamHandler extends JDBCURLStreamHandler {
-	@Override
-	protected URLConnection openConnection (URL url) throws IOException {
-	    return new JDBCURLConnection(url) {
-		protected Connection getConnection () throws SQLException {
-		    return DriverManager.getConnection(String.format("jdbc:sqlite:%s", url.getPath().split("/")[1]));}};}}
-
-    public static abstract class JDBCURLConnection extends URLConnection {
-	JDBCURLConnection (URL url) {
-	    super(url);}
-	@Override
-	public synchronized void connect () throws IOException {
-	    try (Connection c = getConnection()) {connected = true;}
-	    catch (Exception e) {throw new RuntimeException(e);}}
-	protected abstract Connection getConnection () throws SQLException;
-	@Override
-	public synchronized InputStream getInputStream () throws IOException {
-	    if (!connected) connect();
-	    PipedInputStream in = new PipedInputStream();
-	    PrintStream out = new PrintStream(new PipedOutputStream(in));
-	    new Thread(new Runnable () {
-		    public void run () {
-			try (Connection c = getConnection();
-			     Statement s = c.createStatement();
-			     ResultSet r = s.executeQuery(url.getQuery())) {
-			    for (Map<String, Util.SQLValue> p : Util.asIterable(r))
-				out.println(p.toString());
-			    out.close();}
-			catch (Exception e) {throw new RuntimeException(e);}}}).start();
-	    return in;}
-	@Override
-	public synchronized Object getContent () throws IOException {
 	    return null;}}
 
     public static void main (String[] args) {
