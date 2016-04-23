@@ -40,6 +40,18 @@ public class Util {
 			for (Map.Entry<String, SQLValue> e : proxy.next().entrySet()) p.setProperty(e.getKey(), e.getValue().toString());
 			return p;}};}};}
 
+    // public static Iterable<List<String>> asListIterable (final Iterable<Properties> props) throws SQLException {
+    // 	return new Iterable<List<String>> {
+    // 	    @Override public Iterator<List<String>> iterator () {
+    // 		return new Iterator<List<String>>() {
+    // 		    final Iterator<Properties> proxy = it.iterator();
+    // 		    @Override public boolean hasNext () {return proxy.hasNext();}
+    // 		    @Override public List<String> next () {
+    // 			ArrayList<String> l = new ArrayList<>();
+    // 			for (Properties p : proxy.next()) l.add(p.
+			
+    // 	return null;}
+
     /**
      * Adapt a ResultSet as an Iterable of String-to-SQLValue Maps.
      */

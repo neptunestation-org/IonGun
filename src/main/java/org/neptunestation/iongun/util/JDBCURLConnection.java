@@ -8,6 +8,9 @@ import javax.sql.*;
 import javax.sql.rowset.*;
 
 public abstract class JDBCURLConnection extends URLConnection {
+    protected String accept;
+    protected Properties properties = new Properties();
+
     public JDBCURLConnection (URL url) {
 	super(url);}
 
@@ -15,6 +18,7 @@ public abstract class JDBCURLConnection extends URLConnection {
 
     @Override
     public synchronized void connect () throws IOException {
+	accept = getRequestProperty("Accept");
 	try (Connection c = getConnection()) {connected = true;}
 	catch (Exception e) {throw new RuntimeException(e);}}
 
@@ -28,24 +32,21 @@ public abstract class JDBCURLConnection extends URLConnection {
 		    try (Connection c = getConnection();
 			 Statement s = c.createStatement();
 			 ResultSet r = s.executeQuery(url.getQuery())) {
-
-			// Map
-			// for (Map<String, Util.SQLValue> p : Util.asIterable(r)) out.println(p.toString());
-
-			// Properties
-			// for (Properties p : Util.asIterable(Util.asIterable(r))) out.println(p.toString());
-
-			// Properties XML
-			// ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-			// for (Properties p : Util.asIterable(Util.asIterable(r))) p.storeToXML(buffer, "made with ionun");
-			// out.println(buffer.toString());
-
-			// Web XML
-			// StringWriter buffer = new StringWriter();
-			// WebRowSet wrs = RowSetProvider.newFactory().createWebRowSet();
-			// wrs.writeXml(r, buffer);
-			// out.print(buffer.toString());
-
+			if ("text/map".equalsIgnoreCase(accept)) {
+			    for (Map<String, Util.SQLValue> p : Util.asIterable(r)) out.println(p.toString());}
+			if ("text/properties".equalsIgnoreCase(accept)) {
+			    for (Properties p : Util.asIterable(Util.asIterable(r))) out.println(p.toString());}
+			if ("text/properties-list".equalsIgnoreCase(accept)) {
+			    for (Properties p : Util.asIterable(Util.asIterable(r))) p.list(out);}
+			if ("text/properties-xml".equalsIgnoreCase(accept)) {
+			    ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+			    for (Properties p : Util.asIterable(Util.asIterable(r))) p.storeToXML(buffer, "made with ionun");
+			    out.println(buffer.toString());}
+			if ("text/web-xml".equalsIgnoreCase(accept)) {
+			    StringWriter buffer = new StringWriter();
+			    WebRowSet wrs = RowSetProvider.newFactory().createWebRowSet();
+			    wrs.writeXml(r, buffer);
+			    out.print(buffer.toString());}
 			out.close();}
 		    catch (Exception e) {throw new RuntimeException(e);}}}).start();
 	return in;}
