@@ -1,12 +1,12 @@
 package org.neptunestation.iongun;
 
-import iongun.net.*;
-import iongun.util.*;
 import java.io.*;
 import java.net.*;
 import java.sql.*;
 import java.util.*;
 import org.apache.commons.cli.*;
+import org.neptunestation.iongun.net.*;
+import org.neptunestation.iongun.util.*;
 
 public class IonGun {
     public static class IonOptions extends Options {
@@ -14,35 +14,6 @@ public class IonGun {
 	    for (String s : longOpts)
 		addOption(Option.builder(opt).longOpt(s).desc(description).hasArg(hasArg).build());
 	    return this;}}
-
-    public static class SqlURLStreamHandlerFactory implements URLStreamHandlerFactory {
-	@Override
-	public URLStreamHandler createURLStreamHandler (String protocol) {
-	    if (Arrays.asList("mysql",
-			      "mysqls",
-			      "mysqlssl").contains(protocol))
-		return new MySQLJDBCURLStreamHandler();
-	    if (Arrays.asList("oracle",
-			      "ora").contains(protocol))
-		return new OracleJDBCURLStreamHandler();
-	    if (Arrays.asList("postgresql",
-			      "pg",
-			      "pgsql",
-			      "postgres",
-			      "postgresqlssl",
-			      "pgs",
-			      "pgsqlssl",
-			      "postgresssl",
-			      "pgssl",
-			      "postgresqls",
-			      "pgsqls",
-			      "postgress").contains(protocol))
-		return new PostgresJDBCURLStreamHandler();
-	    if (Arrays.asList("sqlite",
-			      "sqlite2",
-			      "sqlite3").contains(protocol))
-		return new SQLiteJDBCURLStreamHandler();
-	    return null;}}
 
     public static void main (String[] args) {
 	CommandLineParser parser = new DefaultParser();
@@ -69,6 +40,10 @@ public class IonGun {
 	HelpFormatter f = new HelpFormatter();
 	f.setOptionComparator(null);
 	try {
+	    Class.forName("org.neptunestation.iongun.net.MySQLJDBCURLStreamHandler");
+	    Class.forName("org.neptunestation.iongun.net.OracleJDBCURLStreamHandler");
+	    Class.forName("org.neptunestation.iongun.net.PostgresJDBCURLStreamHandler");
+	    Class.forName("org.neptunestation.iongun.net.SQLiteJDBCURLStreamHandler");
 	    CommandLine line = parser.parse(options, args);
 	    if (line.hasOption("help")) printHelp();
 	    URL.setURLStreamHandlerFactory(new SqlURLStreamHandlerFactory());
@@ -81,6 +56,7 @@ public class IonGun {
 							     .getInputStream()));
 		while ((l = br.readLine())!=null)
 		    System.out.println(l);}}
+	catch (ClassNotFoundException e) {throw new RuntimeException(e);}
 	catch (IOException e) {throw new RuntimeException(e);}
 	catch (ParseException e) {
 	    System.out.println("Unexpected exception:" + e.getMessage());

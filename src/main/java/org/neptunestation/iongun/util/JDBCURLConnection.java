@@ -1,4 +1,4 @@
-package iongun.util;
+package org.neptunestation.iongun.util;
 
 import java.io.*;
 import java.net.*;
