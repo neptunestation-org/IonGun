@@ -4,6 +4,8 @@ import java.io.*;
 import java.net.*;
 import java.sql.*;
 import java.util.*;
+import javax.sql.*;
+import javax.sql.rowset.*;
 
 public abstract class JDBCURLConnection extends URLConnection {
     public JDBCURLConnection (URL url) {
@@ -23,8 +25,24 @@ public abstract class JDBCURLConnection extends URLConnection {
 		    try (Connection c = getConnection();
 			 Statement s = c.createStatement();
 			 ResultSet r = s.executeQuery(url.getQuery())) {
-			for (Map<String, Util.SQLValue> p : Util.asIterable(r))
-			    out.println(p.toString());
+
+			// Map
+			// for (Map<String, Util.SQLValue> p : Util.asIterable(r)) out.println(p.toString());
+
+			// Properties
+			// for (Properties p : Util.asIterable(Util.asIterable(r))) out.println(p.toString());
+
+			// Properties XML
+			// ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+			// for (Properties p : Util.asIterable(Util.asIterable(r))) p.storeToXML(buffer, "made with ionun");
+			// out.println(buffer.toString());
+
+			// Web XML
+			// StringWriter buffer = new StringWriter();
+			// WebRowSet wrs = RowSetProvider.newFactory().createWebRowSet();
+			// wrs.writeXml(r, buffer);
+			// out.print(buffer.toString());
+
 			out.close();}
 		    catch (Exception e) {throw new RuntimeException(e);}}}).start();
 	return in;}

@@ -41,7 +41,7 @@ public class Util {
 			return p;}};}};}
 
     /**
-     * Adapt a ResultSet as an Iterable of Strig-to-SQLValue Maps.
+     * Adapt a ResultSet as an Iterable of String-to-SQLValue Maps.
      */
     public static Iterable<Map<String, SQLValue>> asIterable (final ResultSet r) throws SQLException {
 	if (r instanceof RowSet) ((RowSet)r).execute();
