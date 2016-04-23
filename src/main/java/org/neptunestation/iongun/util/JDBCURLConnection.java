@@ -10,11 +10,14 @@ import javax.sql.rowset.*;
 public abstract class JDBCURLConnection extends URLConnection {
     public JDBCURLConnection (URL url) {
 	super(url);}
+
+    protected abstract Connection getConnection () throws SQLException;
+
     @Override
     public synchronized void connect () throws IOException {
 	try (Connection c = getConnection()) {connected = true;}
 	catch (Exception e) {throw new RuntimeException(e);}}
-    protected abstract Connection getConnection () throws SQLException;
+
     @Override
     public synchronized InputStream getInputStream () throws IOException {
 	if (!connected) connect();
@@ -46,6 +49,7 @@ public abstract class JDBCURLConnection extends URLConnection {
 			out.close();}
 		    catch (Exception e) {throw new RuntimeException(e);}}}).start();
 	return in;}
+
     @Override
     public synchronized Object getContent () throws IOException {
 	return null;}}
