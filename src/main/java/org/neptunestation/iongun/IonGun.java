@@ -14,12 +14,19 @@ public class IonGun {
 	    Class.forName("org.neptunestation.iongun.net.OracleJDBCURLStreamHandler");
 	    Class.forName("org.neptunestation.iongun.net.PostgresJDBCURLStreamHandler");
 	    Class.forName("org.neptunestation.iongun.net.SQLiteJDBCURLStreamHandler");
+	    Class.forName("org.neptunestation.iongun.net.MapResultSetHandler");
+	    Class.forName("org.neptunestation.iongun.net.PropertiesResultSetHandler");
+	    Class.forName("org.neptunestation.iongun.net.PropertiesListResultSetHandler");
+	    Class.forName("org.neptunestation.iongun.net.PropertiesXMLResultSetHandler");
+	    Class.forName("org.neptunestation.iongun.net.WebXMLResultSetHandler");
 	    URL.setURLStreamHandlerFactory(new SqlURLStreamHandlerFactory());
 	    String l;
 	    for (String s : args) {
-		URLConnection c =
+		JDBCURLConnection c =
+		    (JDBCURLConnection)
 		    ("sql".equalsIgnoreCase((new URL(s)).getProtocol()) ?
 		     new URL((new URL(s)).getFile()) : new URL(s)).openConnection();
+		c.setResultSetHandlerFactory(new ResultSetHandlerFactory(){});
 		// c.setRequestProperty("Accept", "text/map");
 		// c.addRequestProperty("Accept", "text/properties");
 		// c.addRequestProperty("Accept", "text/properties-list");
