@@ -11,4 +11,5 @@ public abstract class ResultSetHandlerFactory {
 
     public ResultSetHandler createResultSetHandler (String mimeType) {
 	for (ResultSetHandler h : handlers) if (h.accepts(mimeType)) return h;
-	return null;}}
+	for (ResultSetHandler h : handlers) return h;
+	throw new IllegalStateException("No ResultSetHandler instances registered");}}

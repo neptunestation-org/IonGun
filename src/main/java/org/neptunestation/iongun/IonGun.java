@@ -14,11 +14,13 @@ public class IonGun {
 	    Class.forName("org.neptunestation.iongun.net.OracleJDBCURLStreamHandler");
 	    Class.forName("org.neptunestation.iongun.net.PostgresJDBCURLStreamHandler");
 	    Class.forName("org.neptunestation.iongun.net.SQLiteJDBCURLStreamHandler");
+
 	    Class.forName("org.neptunestation.iongun.net.MapResultSetHandler");
 	    Class.forName("org.neptunestation.iongun.net.PropertiesResultSetHandler");
 	    Class.forName("org.neptunestation.iongun.net.PropertiesListResultSetHandler");
 	    Class.forName("org.neptunestation.iongun.net.PropertiesXMLResultSetHandler");
 	    Class.forName("org.neptunestation.iongun.net.WebXMLResultSetHandler");
+	    Class.forName("org.neptunestation.iongun.net.JSONResultSetRenderer");
 	    URL.setURLStreamHandlerFactory(new SqlURLStreamHandlerFactory());
 	    String l;
 	    for (String s : args) {
@@ -27,13 +29,7 @@ public class IonGun {
 		    ("sql".equalsIgnoreCase((new URL(s)).getProtocol()) ?
 		     new URL((new URL(s)).getFile()) : new URL(s)).openConnection();
 		c.setResultSetHandlerFactory(new ResultSetHandlerFactory(){});
-		// c.setRequestProperty("Accept", "text/map");
-		// c.addRequestProperty("Accept", "text/properties");
-		// c.addRequestProperty("Accept", "text/properties-list");
-		// c.addRequestProperty("Accept", "text/properties-xml");
-		c.addRequestProperty("Accept", "text/web-xml");
-		// c.addRequestProperty("Accept", "text/html");
-		// c.addRequestProperty("Accept", "text/csv");
+		c.addRequestProperty("Accept", System.getProperty("accept"));
 		print(c.getInputStream(), System.out);}}
 	catch (Exception e) {
 	    e.printStackTrace(System.err);

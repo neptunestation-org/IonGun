@@ -30,7 +30,7 @@ public abstract class JDBCURLConnection extends URLConnection {
     public synchronized InputStream getInputStream () throws IOException {
 	if (!connected) connect();
 	PipedInputStream in = new PipedInputStream();
-	PrintStream out = new PrintStream(new PipedOutputStream(in));
+	final PrintStream out = new PrintStream(new PipedOutputStream(in));
 	new Thread(new Runnable () {
 		public void run () {
 		    try (Connection c = getConnection();

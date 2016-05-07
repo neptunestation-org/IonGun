@@ -34,11 +34,33 @@ public class Util {
 	    @Override public Iterator<Properties> iterator () {
 		return new Iterator<Properties>() {
 		    final Iterator<Map<String, SQLValue>> proxy = it.iterator();
+		    @Override public void remove () {throw new UnsupportedOperationException();}
 		    @Override public boolean hasNext () {return proxy.hasNext();}
 		    @Override public Properties next () {
 			Properties p = new Properties();
 			for (Map.Entry<String, SQLValue> e : proxy.next().entrySet()) p.setProperty(e.getKey(), e.getValue().toString());
 			return p;}};}};}
+
+    /**
+     * Adapt an Iterable of Properties as an Iterable of Strings.
+     * Specifically, render each Properties object as a JSON blob.
+     */
+    public static Iterable<String> asPropertiesIterable (final Iterable<Properties> it) {
+	return new Iterable<String>() {
+	    @Override public Iterator<String> iterator () {
+		return new Iterator<String>() {
+		    final Iterator<Properties> proxy = it.iterator();
+		    @Override public void remove () {throw new UnsupportedOperationException();}
+		    @Override public boolean hasNext () {return proxy.hasNext();}
+		    @Override public String next () {
+			StringBuffer sb = new StringBuffer();
+			sb.append("{");
+			int i = 0;
+			for (Map.Entry<Object, Object> e : proxy.next().entrySet()) {
+			    sb.append(String.format("%s\"%s\": \"%s\"", i==0?"":", ", e.getKey(), e.getValue()));
+			    i++;}
+			sb.append("}");
+			return sb.toString();}};}};}
 
     /**
      * Adapt a ResultSet as an Iterable of String-to-SQLValue Maps.
