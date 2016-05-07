@@ -10,11 +10,12 @@ import org.neptunestation.iongun.util.*;
 public class IonGun {
     public static void main (String[] args) {
 	try {
+	    // Load Database Type Stream Handlers
 	    Class.forName("org.neptunestation.iongun.net.MySQLJDBCURLStreamHandler");
 	    Class.forName("org.neptunestation.iongun.net.OracleJDBCURLStreamHandler");
 	    Class.forName("org.neptunestation.iongun.net.PostgresJDBCURLStreamHandler");
 	    Class.forName("org.neptunestation.iongun.net.SQLiteJDBCURLStreamHandler");
-
+	    // Load Output Type Handlers
 	    Class.forName("org.neptunestation.iongun.net.MapResultSetHandler");
 	    Class.forName("org.neptunestation.iongun.net.PropertiesResultSetHandler");
 	    Class.forName("org.neptunestation.iongun.net.PropertiesListResultSetHandler");
