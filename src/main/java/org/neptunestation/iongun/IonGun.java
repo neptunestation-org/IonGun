@@ -31,7 +31,8 @@ public class IonGun {
 		     new URL((new URL(s)).getFile()) : new URL(s)).openConnection();
 		c.setResultSetHandlerFactory(new ResultSetHandlerFactory(){});
 		c.addRequestProperty("Accept", System.getProperty("accept"));
-		print(c.getInputStream(), System.out);}}
+		print(c.getInputStream(), System.out);
+		System.out.print((char)29);}}
 	catch (Exception e) {
 	    e.printStackTrace(System.err);
 	    System.exit(1);}}

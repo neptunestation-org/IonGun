@@ -14,10 +14,4 @@ public class PropertiesXMLResultSetHandler implements ResultSetHandler {
 
     @Override
     public void print (ResultSet r, PrintStream out) throws IOException, SQLException {
-	ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-	for (Properties p : Util.asIterable(Util.asIterable(r))) p.storeToXML(buffer, "made with ionun");
-	out.println(buffer.toString());}}
-
-
-
-
+	for (Properties p : Util.asIterable(Util.asIterable(r))) p.storeToXML(out, "Made with IonGun");}}

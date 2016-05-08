@@ -16,10 +16,7 @@ public class WebXMLResultSetHandler implements ResultSetHandler {
 
     @Override
     public void print (ResultSet r, PrintStream out) throws IOException, SQLException {
-	StringWriter buffer = new StringWriter();
-	WebRowSet wrs = RowSetProvider.newFactory().createWebRowSet();
-	wrs.writeXml(r, buffer);
-	out.print(buffer.toString());}}
+	RowSetProvider.newFactory().createWebRowSet().writeXml(r, out);}}
 
 
 
