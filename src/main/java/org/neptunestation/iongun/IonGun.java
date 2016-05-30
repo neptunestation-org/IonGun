@@ -10,7 +10,7 @@ import org.neptunestation.iongun.util.*;
 public class IonGun {
     public static void main (String[] args) {
 	try {
-	    URL.setURLStreamHandlerFactory(new SQLURLStreamHandlerFactory());
+	    URL.setURLStreamHandlerFactory(new JDBCURLStreamHandlerFactory());
 	    for (String s : args) {
 		URLConnection c = (new URL(s)).openConnection();
 		c.setRequestProperty("Accept", System.getenv("ACCEPT"));
