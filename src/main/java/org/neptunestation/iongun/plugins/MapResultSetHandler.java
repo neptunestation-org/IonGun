@@ -6,8 +6,6 @@ import java.util.*;
 import org.neptunestation.iongun.util.*;
 
 public class MapResultSetHandler implements ResultSetHandler {
-    static {ResultSetHandlerFactory.register(new MapResultSetHandler());}
-
     @Override
     public boolean accepts (String mimeType) {
 	return "text/map".equalsIgnoreCase(mimeType);}

@@ -10,8 +10,12 @@ import org.neptunestation.iongun.util.*;
 
 public class IonGun {
     public static void main (String[] args) {
-	URL.setURLStreamHandlerFactory(new SQLUrlStreamHandlerFactory());
-	try {for (String s : args) print((new URL(s)).openStream(), System.out);}
+	try {
+	    URL.setURLStreamHandlerFactory(new SQLUrlStreamHandlerFactory());
+	    for (String s : args) {
+		URLConnection c = (new URL(s)).openConnection();
+		c.setRequestProperty("Accept", System.getenv("ACCEPT"));
+		print(c.getInputStream(), System.out);}}
 	catch (Exception e) {System.exit(1);}}
 
     public static void print (InputStream in, PrintStream out) throws IOException {

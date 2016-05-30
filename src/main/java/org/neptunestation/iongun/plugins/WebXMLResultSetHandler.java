@@ -8,8 +8,6 @@ import javax.sql.rowset.*;
 import org.neptunestation.iongun.util.*;
 
 public class WebXMLResultSetHandler implements ResultSetHandler {
-    static {ResultSetHandlerFactory.register(new WebXMLResultSetHandler());}
-
     @Override
     public boolean accepts (String mimeType) {
 	return "text/web-xml".equalsIgnoreCase(mimeType);}

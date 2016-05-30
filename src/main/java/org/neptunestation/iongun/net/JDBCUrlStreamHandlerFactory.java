@@ -3,8 +3,10 @@ package org.neptunestation.iongun.net;
 import java.io.*;
 import java.net.*;
 import java.sql.*;
+import java.util.*;
 import javax.sql.*;
 import javax.sql.rowset.*;
+import org.neptunestation.iongun.util.*;
 
 public class JDBCUrlStreamHandlerFactory implements URLStreamHandlerFactory {
     public String getUrl (URL u, String subname) {
@@ -27,8 +29,14 @@ public class JDBCUrlStreamHandlerFactory implements URLStreamHandlerFactory {
 		@Override
 		protected URLConnection openConnection (final URL u) {
 		    return new URLConnection (u) {
+			Map<String, List<String>> properties;
+			@Override
+			public String getContentType () {
+			    for (String s : properties.get("Accept")) return s;
+			    return "text/xml";}
 			@Override
 			public synchronized void connect () {
+			    properties = getRequestProperties();
 			    try (Connection c =
 				 u.getUserInfo()==null ?
 				 DriverManager.getConnection(getUrl(u, subname)) :
@@ -52,7 +60,7 @@ public class JDBCUrlStreamHandlerFactory implements URLStreamHandlerFactory {
 									 u.getUserInfo().split(":")[1]);
 					     Statement s = c.createStatement();
 					     ResultSet r = s.executeQuery(url.getQuery())) {
-					    RowSetProvider.newFactory().createWebRowSet().writeXml(r, out);
+					    ResultSetHandlerFactory.createResultSetHandler(getContentType()).print(r,out);
 					    out.close();}
 					catch (Exception e) {throw new RuntimeException(e);}}}).start();
 			    return in;}};}};

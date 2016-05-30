@@ -6,8 +6,6 @@ import java.util.*;
 import org.neptunestation.iongun.util.*;
 
 public class PropertiesXMLResultSetHandler implements ResultSetHandler {
-    static {ResultSetHandlerFactory.register(new PropertiesXMLResultSetHandler());}
-
     @Override
     public boolean accepts (String mimeType) {
 	return "text/properties-xml".equalsIgnoreCase(mimeType);}

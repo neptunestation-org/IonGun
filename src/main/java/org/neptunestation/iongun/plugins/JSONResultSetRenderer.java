@@ -6,8 +6,6 @@ import java.util.*;
 import org.neptunestation.iongun.util.*;
 
 public class JSONResultSetRenderer implements ResultSetHandler {
-    static {ResultSetHandlerFactory.register(new JSONResultSetRenderer());}
-
     @Override
     public boolean accepts (String mimeType) {
 	return "text/json".equalsIgnoreCase(mimeType);}
