@@ -17,7 +17,7 @@ public class JDBCURLStreamHandlerFactory implements URLStreamHandlerFactory {
 			     u.getPath());}
     @Override
     public URLStreamHandler createURLStreamHandler (String protocol) {
-	if ("jdbc".equals(protocol))
+	if (Arrays.asList("sql", "jdbc").contains(protocol))
 	    return new URLStreamHandler () {
 		String subname;
 		@Override

@@ -6,7 +6,7 @@ import java.net.*;
 public class SQLURLStreamHandlerFactory extends JDBCURLStreamHandlerFactory {
     @Override
     public URLStreamHandler createURLStreamHandler (String protocol) {
-	if ("sql".equals(protocol))
+	if (false && "sql".equals(protocol))
 	    return new URLStreamHandler () {
 		String vendor;
 		@Override
