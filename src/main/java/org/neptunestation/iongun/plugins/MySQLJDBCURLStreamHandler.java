@@ -7,14 +7,9 @@ import java.util.*;
 import org.neptunestation.iongun.util.*;
 
 public class MySQLJDBCURLStreamHandler extends JDBCURLStreamHandler {
-    static {SqlURLStreamHandlerFactory.registerStreamHandler(new MySQLJDBCURLStreamHandler());}
-
     @Override
-    public boolean acceptsProtocol (String protocol) {
-	if (Arrays.asList("mysql",
-			  "mysqls",
-			  "mysqlssl").contains(protocol)) return true;
-	return false;}
+    public boolean accepts (String protocol) {
+	return (Arrays.asList("mysql", "mysqls", "mysqlssl").contains(protocol));}
 
     @Override
     protected URLConnection openConnection (URL url) throws IOException {

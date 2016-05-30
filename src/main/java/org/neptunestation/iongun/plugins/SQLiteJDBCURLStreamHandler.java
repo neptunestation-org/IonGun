@@ -7,14 +7,9 @@ import java.util.*;
 import org.neptunestation.iongun.util.*;
 
 public class SQLiteJDBCURLStreamHandler extends JDBCURLStreamHandler {
-    static {SqlURLStreamHandlerFactory.registerStreamHandler(new SQLiteJDBCURLStreamHandler());}
-
     @Override
-    public boolean acceptsProtocol (String protocol) {
-	if (Arrays.asList("sqlite",
-			  "sqlite2",
-			  "sqlite3").contains(protocol)) return true;
-	return false;}
+    public boolean accepts (String protocol) {
+	return (Arrays.asList("sqlite", "sqlite2", "sqlite3").contains(protocol));}
 
     @Override
     protected URLConnection openConnection (URL url) throws IOException {

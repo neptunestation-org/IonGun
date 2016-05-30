@@ -7,23 +7,20 @@ import java.util.*;
 import org.neptunestation.iongun.util.*;
 
 public class PostgresJDBCURLStreamHandler extends JDBCURLStreamHandler {
-    static {SqlURLStreamHandlerFactory.registerStreamHandler(new PostgresJDBCURLStreamHandler());}
-
     @Override
-    public boolean acceptsProtocol (String protocol) {
-	if (Arrays.asList("postgresql",
-			  "pg",
-			  "pgsql",
-			  "postgres",
-			  "postgresqlssl",
-			  "pgs",
-			  "pgsqlssl",
-			  "postgresssl",
-			  "pgssl",
-			  "postgresqls",
-			  "pgsqls",
-			  "postgress").contains(protocol)) return true;
-	return false;}
+    public boolean accepts (String protocol) {
+	return (Arrays.asList("postgresql",
+			      "pg",
+			      "pgsql",
+			      "postgres",
+			      "postgresqlssl",
+			      "pgs",
+			      "pgsqlssl",
+			      "postgresssl",
+			      "pgssl",
+			      "postgresqls",
+			      "pgsqls",
+			      "postgress").contains(protocol));}
 
     @Override
     protected URLConnection openConnection (URL url) throws IOException {

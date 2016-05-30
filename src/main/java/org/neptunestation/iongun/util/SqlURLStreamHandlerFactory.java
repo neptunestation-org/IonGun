@@ -8,12 +8,11 @@ import java.util.concurrent.*;
 import org.neptunestation.iongun.util.*;
 
 public class SqlURLStreamHandlerFactory implements URLStreamHandlerFactory {
-    private static List<JDBCURLStreamHandler> handlers = new CopyOnWriteArrayList<>();
-
-    public static void registerStreamHandler (JDBCURLStreamHandler handler) {
-	handlers.add(handler);}
+    private static ServiceLoader<JDBCURLStreamHandler> loader = ServiceLoader.load(JDBCURLStreamHandler.class);
 
     @Override
     public URLStreamHandler createURLStreamHandler (String protocol) {
-	for (JDBCURLStreamHandler h : handlers) if (h.acceptsProtocol(protocol)) return h;
+	for (Iterator<JDBCURLStreamHandler> it = loader.iterator(); it.hasNext();) {
+	    JDBCURLStreamHandler h = (JDBCURLStreamHandler)it.next();
+	    if (h.accepts(protocol)) return h;}
 	return null;}}
