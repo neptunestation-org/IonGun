@@ -4,7 +4,6 @@ import java.io.*;
 import java.net.*;
 import java.sql.*;
 import java.util.*;
-import org.neptunestation.iongun.net.*;
 import org.neptunestation.iongun.plugins.*;
 import org.neptunestation.iongun.util.*;
 
