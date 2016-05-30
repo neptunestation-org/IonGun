@@ -33,7 +33,7 @@ public class JDBCUrlStreamHandlerFactory implements URLStreamHandlerFactory {
 			@Override
 			public String getContentType () {
 			    for (String s : properties.get("Accept")) return s;
-			    return "text/xml";}
+			    return "text/json";}
 			@Override
 			public synchronized void connect () {
 			    properties = getRequestProperties();
