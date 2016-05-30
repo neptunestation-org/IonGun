@@ -3,7 +3,7 @@ package org.neptunestation.iongun.util;
 import java.io.*;
 import java.net.*;
 
-public class SQLUrlStreamHandlerFactory extends JDBCUrlStreamHandlerFactory {
+public class SQLURLStreamHandlerFactory extends JDBCURLStreamHandlerFactory {
     @Override
     public URLStreamHandler createURLStreamHandler (String protocol) {
 	if ("sql".equals(protocol))

@@ -8,7 +8,7 @@ import javax.sql.*;
 import javax.sql.rowset.*;
 import org.neptunestation.iongun.util.*;
 
-public class JDBCUrlStreamHandlerFactory implements URLStreamHandlerFactory {
+public class JDBCURLStreamHandlerFactory implements URLStreamHandlerFactory {
     public String getUrl (URL u, String subname) {
 	return String.format("%s:%s:%s%s", "jdbc", subname,
 			     u.getHost().equals("") ? "" :

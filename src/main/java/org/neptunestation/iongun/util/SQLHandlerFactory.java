@@ -7,7 +7,7 @@ import java.util.*;
 import java.util.concurrent.*;
 import org.neptunestation.iongun.util.*;
 
-public class SqlURLStreamHandlerFactory implements URLStreamHandlerFactory {
+public class SQLHandlerFactory implements URLStreamHandlerFactory {
     private static ServiceLoader<JDBCURLStreamHandler> loader = ServiceLoader.load(JDBCURLStreamHandler.class);
 
     @Override
