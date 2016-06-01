@@ -12,21 +12,13 @@ public class JDBCURLStreamHandlerFactory implements URLStreamHandlerFactory {
     static class DefaultTranslator {
 	public String vendor;
 	public DefaultTranslator (String v) {vendor = v;}
-	public String translate (URL u) {
-	    return
-		String.format("jdbc:%s://%s%s?%s",
-			      vendor,
-			      u.getAuthority(),
-			      u.getPath(),
-			      u.getQuery());}}
+	public String translate (URL u) {return String.format("jdbc:%s://%s%s?%s", vendor, u.getAuthority(), u.getPath(), u.getQuery());}}
     static class SQLiteTranslator extends DefaultTranslator {
 	public SQLiteTranslator (String v) {super(v);}
-	public String translate (URL u) {
-	    return
-		String.format("jdbc:%s:%s?%s",
-			      vendor,
-			      u.getAuthority(),
-			      u.getQuery());}}
+	public String translate (URL u) {return String.format("jdbc:%s:%s?%s", vendor, u.getAuthority(), u.getQuery());}}
+    static class AutoCloseableArrayList<E> extends ArrayList<E> implements AutoCloseable {
+	AutoCloseableArrayList (E... items) {super.addAll(Arrays.asList(items));}
+	public void close () {}}
     static Map<List<String>, DefaultTranslator> vendors = new HashMap<>();
     static Set<String> allVendors = new HashSet<>();
     static {
@@ -96,9 +88,7 @@ public class JDBCURLStreamHandlerFactory implements URLStreamHandlerFactory {
 			    try (Connection c =
 				 u.getUserInfo()==null ?
 				 DriverManager.getConnection(getUrl(u, subname)) :
-				 DriverManager.getConnection(getUrl(u, subname),
-							     u.getUserInfo().split(":")[0],
-							     u.getUserInfo().split(":")[1])) {
+				 DriverManager.getConnection(getUrl(u, subname), u.getUserInfo().split(":")[0], u.getUserInfo().split(":")[1])) {
 				connected = true;}
 			    catch (Exception e) {throw new RuntimeException(e);}}
 			@Override
@@ -111,12 +101,11 @@ public class JDBCURLStreamHandlerFactory implements URLStreamHandlerFactory {
 					try (Connection c =
 					     u.getUserInfo()==null ?
 					     DriverManager.getConnection(getUrl(u, subname)) :
-					     DriverManager.getConnection(getUrl(u, subname),
-									 u.getUserInfo().split(":")[0],
-									 u.getUserInfo().split(":")[1]);
+					     DriverManager.getConnection(getUrl(u, subname), u.getUserInfo().split(":")[0], u.getUserInfo().split(":")[1]);
 					     Statement s = c.createStatement();
-					     ResultSet r = s.executeQuery(url.getQuery())) {
-					    ResultSetHandlerFactory.createResultSetHandler(getContentType()).print(r,out);
+					     AutoCloseableArrayList<Boolean> b = new AutoCloseableArrayList("show-tables".equals(url.getQuery()) ? true : s.execute(url.getQuery()));
+					     ResultSet r = b.get(0) ? "show-tables".equals(url.getQuery()) ? c.getMetaData().getTables(null, null, null, null) : s.getResultSet() : null) {
+					    if (r!=null) ResultSetHandlerFactory.createResultSetHandler(getContentType()).print(r, out);
 					    out.close();}
 					catch (Exception e) {throw new RuntimeException(e);}}}).start();
 			    return in;}};}};

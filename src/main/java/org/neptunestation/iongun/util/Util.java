@@ -38,7 +38,7 @@ public class Util {
 		    @Override public boolean hasNext () {return proxy.hasNext();}
 		    @Override public Properties next () {
 			Properties p = new Properties();
-			for (Map.Entry<String, SQLValue> e : proxy.next().entrySet()) p.setProperty(e.getKey(), e.getValue().toString());
+			for (Map.Entry<String, SQLValue> e : proxy.next().entrySet()) p.setProperty(e.getKey(), (""+e.getValue()));
 			return p;}};}};}
 
     /**

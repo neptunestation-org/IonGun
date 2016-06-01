@@ -11,11 +11,17 @@ public class IonGun {
     public static void main (String[] args) {
 	try {
 	    URL.setURLStreamHandlerFactory(new JDBCURLStreamHandlerFactory());
+	    String[] pseudos = System.getenv("PSEUDOQUERIES")==null ? new String[]{} : System.getenv("PSEUDOQUERIES").split(",");
 	    for (String s : args) {
-		URLConnection c = (new URL(s)).openConnection();
-		c.setRequestProperty("Accept", System.getenv("ACCEPT"));
-		print(c.getInputStream(), System.out);}}
-	catch (Exception e) {System.exit(1);}}
+		ArrayList<String> queries = new ArrayList<>();
+		queries.addAll(Arrays.asList(pseudos));
+		String[] p = s.split("\\?");
+		if (p.length>1) queries.add(p[1]);
+		for (String q : queries) {
+		    URLConnection c = (new URL(String.format("%s?%s", p[0], q))).openConnection();
+		    c.setRequestProperty("Accept", System.getenv("ACCEPT"));
+		    print(c.getInputStream(), System.out);}}}
+	catch (Exception e) {e.printStackTrace(); System.exit(1);}}
 
     public static void print (InputStream in, PrintStream out) throws IOException {
 	print(in, out, (char)29);}
