@@ -17,6 +17,6 @@
 * TODO Implement --skip-first-line once IonGun can take commands from stdin
 * TODO Create a canned query to show table-size
 * TODO Implement the --version flag
-* TODO Implement custom URL handling for vendors
+* DONE Implement custom URL handling for vendors
   Primarily, this is to support sql URLs like sql:sqlite3://test.db,
   which in this case the actual JDBC driver (Xerial) cannot handle.
