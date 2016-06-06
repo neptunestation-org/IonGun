@@ -35,6 +35,10 @@ public class JDBCURLStreamHandlerFactory implements URLStreamHandlerFactory {
 			     u.getPort()<0 ? String.format("//%s", u.getHost()) :
 			     String.format("//%s:%s", u.getHost(), u.getPort()),
 			     u.getPath());}
+    public Connection getConnection (URL u, String subname) throws SQLException {
+	return u.getUserInfo()==null ?
+	    DriverManager.getConnection(getUrl(u, subname)) :
+	    DriverManager.getConnection(getUrl(u, subname), u.getUserInfo().split(":")[0], u.getUserInfo().split(":")[1]);}
     @Override
     public URLStreamHandler createURLStreamHandler (String protocol) {
 	if (allVendors.contains(protocol))
@@ -85,28 +89,20 @@ public class JDBCURLStreamHandlerFactory implements URLStreamHandlerFactory {
 			@Override
 			public synchronized void connect () {
 			    properties = getRequestProperties();
-			    try (Connection c =
-				 u.getUserInfo()==null ?
-				 DriverManager.getConnection(getUrl(u, subname)) :
-				 DriverManager.getConnection(getUrl(u, subname), u.getUserInfo().split(":")[0], u.getUserInfo().split(":")[1])) {
-				connected = true;}
+			    try (Connection c = getConnection(u, subname)) {connected = true;}
 			    catch (Exception e) {throw new RuntimeException(e);}}
 			@Override
 			public InputStream getInputStream () throws IOException {
 			    if (!connected) connect();
 			    final PipedInputStream in = new PipedInputStream();
 			    final PrintStream out = new PrintStream(new PipedOutputStream(in));
-			    new Thread(new Runnable () {
-				    public void run () {
-					try (Connection c =
-					     u.getUserInfo()==null ?
-					     DriverManager.getConnection(getUrl(u, subname)) :
-					     DriverManager.getConnection(getUrl(u, subname), u.getUserInfo().split(":")[0], u.getUserInfo().split(":")[1]);
-					     Statement s = c.createStatement();
-					     AutoCloseableArrayList<Boolean> b = new AutoCloseableArrayList("show-tables".equals(url.getQuery()) ? true : s.execute(url.getQuery()));
-					     ResultSet r = b.get(0) ? "show-tables".equals(url.getQuery()) ? c.getMetaData().getTables(null, null, null, null) : s.getResultSet() : null) {
-					    if (r!=null) ResultSetHandlerFactory.createResultSetHandler(getContentType()).print(r, out);
-					    out.close();}
-					catch (Exception e) {throw new RuntimeException(e);}}}).start();
+			    new Thread(()->{
+				    try (Connection c = getConnection(u, subname);
+					 Statement s = c.createStatement();
+					 AutoCloseableArrayList<Boolean> b = new AutoCloseableArrayList("show-tables".equals(url.getQuery()) ? true : s.execute(url.getQuery()));
+					 ResultSet r = b.get(0) ? "show-tables".equals(url.getQuery()) ? c.getMetaData().getTables(null, null, null, null) : s.getResultSet() : null) {
+					if (r!=null) ResultSetHandlerFactory.createResultSetHandler(getContentType()).print(r, out);
+					out.close();}
+				    catch (Exception e) {throw new RuntimeException(e);}}).start();
 			    return in;}};}};
 	return null;}}
