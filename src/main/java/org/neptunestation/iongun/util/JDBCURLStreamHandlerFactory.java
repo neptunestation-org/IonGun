@@ -113,8 +113,9 @@ public class JDBCURLStreamHandlerFactory implements URLStreamHandlerFactory {
 			    new Thread(()->{
 				    try (Connection c = getConnection(u, subname)) {
 					for (QueryHandler q : handlers)
-					    if (q.accepts(u.getQuery()))
+					    if (q.accepts(u.getQuery())) {
 						q.handle(c, u.getQuery(), ResultSetHandlerFactory.createResultSetHandler(getContentType()), out);
+						break;}
 					out.close();}
 				    catch (Exception e) {throw new RuntimeException(e);}}).start();
 			    return in;}};}};
