@@ -29,6 +29,20 @@ public class JDBCURLStreamHandlerFactory implements URLStreamHandlerFactory {
 	vendors.put(Arrays.asList("postgresql", "pg", "pgsql", "postgres"), new DefaultTranslator("postgresql"));
 	vendors.put(Arrays.asList("postgresqlssl", "pgs", "pgsqlssl", "postgresssl", "pgssl", "postgresqls", "pgsqls", "postgress"), new DefaultTranslator("postgresql"));
 	for (List<String> v : vendors.keySet()) allVendors.addAll(v);}
+    static List<QueryHandler> handlers = Arrays.asList(new QueryHandler() {
+	    public boolean accepts (String q) {return "show-tables".equals(q);}
+	    public void handle (Connection c, String q, ResultSetHandler h, PrintStream o) {
+		try (ResultSet r = c.getMetaData().getTables(null, null, null, null)) {
+		    if (r!=null) h.print(r, o);}
+		catch (Exception e) {throw new RuntimeException(e);}}},
+	new QueryHandler () {
+	    public boolean accepts (String q) {return true;}
+	    public void handle (Connection c, String q, ResultSetHandler h, PrintStream o) {
+		try (Statement s = c.createStatement();
+		     AutoCloseableArrayList<Boolean> b = new AutoCloseableArrayList(s.execute(q));
+		     ResultSet r = b.get(0) ? s.getResultSet() : null) {
+		    if (r!=null) h.print(r, o);}
+		catch (Exception e) {throw new RuntimeException(e);}}});
     public String getUrl (URL u, String subname) {
 	return String.format("%s:%s:%s%s", "jdbc", subname,
 			     u.getHost().equals("") ? "" :
@@ -97,11 +111,10 @@ public class JDBCURLStreamHandlerFactory implements URLStreamHandlerFactory {
 			    final PipedInputStream in = new PipedInputStream();
 			    final PrintStream out = new PrintStream(new PipedOutputStream(in));
 			    new Thread(()->{
-				    try (Connection c = getConnection(u, subname);
-					 Statement s = c.createStatement();
-					 AutoCloseableArrayList<Boolean> b = new AutoCloseableArrayList("show-tables".equals(url.getQuery()) ? true : s.execute(url.getQuery()));
-					 ResultSet r = b.get(0) ? "show-tables".equals(url.getQuery()) ? c.getMetaData().getTables(null, null, null, null) : s.getResultSet() : null) {
-					if (r!=null) ResultSetHandlerFactory.createResultSetHandler(getContentType()).print(r, out);
+				    try (Connection c = getConnection(u, subname)) {
+					for (QueryHandler q : handlers)
+					    if (q.accepts(u.getQuery()))
+						q.handle(c, u.getQuery(), ResultSetHandlerFactory.createResultSetHandler(getContentType()), out);
 					out.close();}
 				    catch (Exception e) {throw new RuntimeException(e);}}).start();
 			    return in;}};}};

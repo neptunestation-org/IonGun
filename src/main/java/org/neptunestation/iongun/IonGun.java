@@ -11,26 +11,39 @@ public class IonGun {
     public static void main (String[] args) {
 	try {
 	    URL.setURLStreamHandlerFactory(new JDBCURLStreamHandlerFactory());
-	    String[] pseudos = System.getenv("PSEUDOQUERIES")==null ? new String[]{} : System.getenv("PSEUDOQUERIES").split(",");
-	    for (String s : args) {
-		ArrayList<String> queries = new ArrayList<>();
-		queries.addAll(Arrays.asList(pseudos));
-		String[] p = s.split("\\?");
-		if (p.length>1) queries.add(p[1]);
+	    if (args.length==0) System.exit(1);
+	    ArrayList<String> queries = new ArrayList<>();
+	    String[] p = args[0].split("\\?");
+	    if (p.length>1) queries.add(p[1]);
+	    if (queries.size()>0)
 		for (String q : queries) {
+		    if (q.trim().equals("")) break;
 		    URLConnection c = (new URL(String.format("%s?%s", p[0], q))).openConnection();
 		    c.setRequestProperty("Accept", System.getenv("ACCEPT"));
-		    print(c.getInputStream(), System.out);}}}
+		    print(c.getInputStream(), System.out);
+		    System.out.print((char)10);}
+	    if (args.length>1)
+		for (int i=1; i<args.length; i++) {
+		    if (args[i].trim().equals("")) break;
+		    URLConnection c = (new URL(String.format("%s?%s", p[0], args[i]))).openConnection();
+		    c.setRequestProperty("Accept", System.getenv("ACCEPT"));
+		    print(c.getInputStream(), System.out);
+		    System.out.print((char)10);}
+	    if (args.length==1 && queries.size()==0) {
+		String line = null;
+		for (BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in)); (line=stdin.readLine())!=null;) {
+		    if (line.trim().equals("")) break;
+		    URLConnection c = (new URL(String.format("%s?%s", p[0], line))).openConnection();
+		    c.setRequestProperty("Accept", System.getenv("ACCEPT"));
+		    print(c.getInputStream(), System.out);
+		    System.out.print((char)10);}}}
 	catch (Exception e) {e.printStackTrace(); System.exit(1);}}
 
     public static void print (InputStream in, PrintStream out) throws IOException {
-	print(in, out, (char)29);}
+	// print(in, out, (char)29);}
+	print(in, out, (char)10);}
 
     public static void print (InputStream in, PrintStream out, char delim) throws IOException {
 	BufferedReader br = new BufferedReader(new InputStreamReader(in));
 	String l;
-	while ((l = br.readLine())!=null) out.println(l);
-	out.print(delim);}}
-
-
-
+	while ((l = br.readLine())!=null) {out.print(l); out.print(delim);}}}
