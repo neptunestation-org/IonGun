@@ -13,22 +13,15 @@ public class JDBCURLStreamHandlerFactory implements URLStreamHandlerFactory {
 	public String vendor;
 	public DefaultTranslator (String v) {vendor = v;}
 	public String translate (URL u) {return String.format("jdbc:%s://%s%s?%s", vendor, u.getAuthority(), u.getPath(), u.getQuery());}}
+
     static class SQLiteTranslator extends DefaultTranslator {
 	public SQLiteTranslator (String v) {super(v);}
 	public String translate (URL u) {return String.format("jdbc:%s:%s?%s", vendor, u.getAuthority(), u.getQuery());}}
+
     static class AutoCloseableArrayList<E> extends ArrayList<E> implements AutoCloseable {
 	AutoCloseableArrayList (E... items) {super.addAll(Arrays.asList(items));}
 	public void close () {}}
-    static Map<List<String>, DefaultTranslator> vendors = new HashMap<>();
-    static Set<String> allVendors = new HashSet<>();
-    static {
-	vendors.put(Arrays.asList("sqlite", "sqlite2"), new SQLiteTranslator("sqlite"));
-	vendors.put(Arrays.asList("sqlite3"), new SQLiteTranslator("sqlite"));
-	vendors.put(Arrays.asList("mysql", "mysqls", "mysqlssl"), new DefaultTranslator("mysql"));
-	vendors.put(Arrays.asList("oracle", "ora"), new DefaultTranslator("oracle"));
-	vendors.put(Arrays.asList("postgresql", "pg", "pgsql", "postgres"), new DefaultTranslator("postgresql"));
-	vendors.put(Arrays.asList("postgresqlssl", "pgs", "pgsqlssl", "postgresssl", "pgssl", "postgresqls", "pgsqls", "postgress"), new DefaultTranslator("postgresql"));
-	for (List<String> v : vendors.keySet()) allVendors.addAll(v);}
+
     static List<QueryHandler> handlers = Arrays.asList(new QueryHandler() {
 	    public boolean accepts (String q) {return "show-tables".equals(q);}
 	    public void handle (Connection c, String q, ResultSetHandler h, PrintStream o) {
@@ -43,16 +36,31 @@ public class JDBCURLStreamHandlerFactory implements URLStreamHandlerFactory {
 		     ResultSet r = b.get(0) ? s.getResultSet() : null) {
 		    if (r!=null) h.print(r, o);}
 		catch (Exception e) {throw new RuntimeException(e);}}});
+
+    static Map<List<String>, DefaultTranslator> vendors = new HashMap<>();
+    static Set<String> allVendors = new HashSet<>();
+
+    static {
+	vendors.put(Arrays.asList("sqlite", "sqlite2"), new SQLiteTranslator("sqlite"));
+	vendors.put(Arrays.asList("sqlite3"), new SQLiteTranslator("sqlite"));
+	vendors.put(Arrays.asList("mysql", "mysqls", "mysqlssl"), new DefaultTranslator("mysql"));
+	vendors.put(Arrays.asList("oracle", "ora"), new DefaultTranslator("oracle"));
+	vendors.put(Arrays.asList("postgresql", "pg", "pgsql", "postgres"), new DefaultTranslator("postgresql"));
+	vendors.put(Arrays.asList("postgresqlssl", "pgs", "pgsqlssl", "postgresssl", "pgssl", "postgresqls", "pgsqls", "postgress"), new DefaultTranslator("postgresql"));
+	for (List<String> v : vendors.keySet()) allVendors.addAll(v);}
+
     public String getUrl (URL u, String subname) {
 	return String.format("%s:%s:%s%s", "jdbc", subname,
 			     u.getHost().equals("") ? "" :
 			     u.getPort()<0 ? String.format("//%s", u.getHost()) :
 			     String.format("//%s:%s", u.getHost(), u.getPort()),
 			     u.getPath());}
+
     public Connection getConnection (URL u, String subname) throws SQLException {
 	return u.getUserInfo()==null ?
 	    DriverManager.getConnection(getUrl(u, subname)) :
 	    DriverManager.getConnection(getUrl(u, subname), u.getUserInfo().split(":")[0], u.getUserInfo().split(":")[1]);}
+
     @Override
     public URLStreamHandler createURLStreamHandler (String protocol) {
 	if (allVendors.contains(protocol))
