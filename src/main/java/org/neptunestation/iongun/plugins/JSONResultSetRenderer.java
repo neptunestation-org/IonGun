@@ -13,6 +13,3 @@ public class JSONResultSetRenderer implements ResultSetHandler {
     @Override
     public void print (ResultSet r, PrintStream out) throws IOException, SQLException {
 	for (String p : Util.asPropertiesIterable(Util.asIterable(Util.asIterable(r)))) out.println(p);}}
-
-
-

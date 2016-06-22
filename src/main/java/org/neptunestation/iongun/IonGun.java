@@ -8,10 +8,16 @@ import org.neptunestation.iongun.plugins.*;
 import org.neptunestation.iongun.util.*;
 
 public class IonGun {
+    static char FS = (char)28;
+    static char GS = (char)29;
+    static char RS = (char)30;
+    static char US = (char)31;
     public static void main (String[] args) {
+	RS = (char)10;
+	GS = (char)10;
 	try {
 	    URL.setURLStreamHandlerFactory(new JDBCURLStreamHandlerFactory());
-	    if (args.length==0) System.exit(1);
+	    if (args.length==0) System.exit(255);
 	    ArrayList<String> queries = new ArrayList<>();
 	    String[] p = args[0].split("\\?");
 	    if (p.length>1) queries.add(p[1]);
@@ -20,28 +26,25 @@ public class IonGun {
 		    if (q.trim().equals("")) break;
 		    URLConnection c = (new URL(String.format("%s?%s", p[0], q))).openConnection();
 		    c.setRequestProperty("Accept", System.getenv("ACCEPT"));
-		    print(c.getInputStream(), System.out);
-		    System.out.print((char)10);}
+		    print(c.getInputStream(), System.out, RS);
+		    System.out.print(GS);
+		    return;}
 	    if (args.length>1)
 		for (int i=1; i<args.length; i++) {
 		    if (args[i].trim().equals("")) break;
 		    URLConnection c = (new URL(String.format("%s?%s", p[0], args[i]))).openConnection();
 		    c.setRequestProperty("Accept", System.getenv("ACCEPT"));
-		    print(c.getInputStream(), System.out);
-		    System.out.print((char)10);}
+		    print(c.getInputStream(), System.out, RS);
+		    System.out.print(GS);}
 	    if (args.length==1 && queries.size()==0) {
 		String line = null;
 		for (BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in)); (line=stdin.readLine())!=null;) {
 		    if (line.trim().equals("")) break;
 		    URLConnection c = (new URL(String.format("%s?%s", p[0], line))).openConnection();
 		    c.setRequestProperty("Accept", System.getenv("ACCEPT"));
-		    print(c.getInputStream(), System.out);
-		    System.out.print((char)10);}}}
+		    print(c.getInputStream(), System.out, RS);
+		    System.out.print(GS);}}}
 	catch (Exception e) {e.printStackTrace(); System.exit(1);}}
-
-    public static void print (InputStream in, PrintStream out) throws IOException {
-	// print(in, out, (char)29);}
-	print(in, out, (char)10);}
 
     public static void print (InputStream in, PrintStream out, char delim) throws IOException {
 	BufferedReader br = new BufferedReader(new InputStreamReader(in));

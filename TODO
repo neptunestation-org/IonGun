@@ -8,7 +8,7 @@
 * TODO Create a canned query to show db-size
 * TODO Create a canned query to show proclist
 * TODO Create a canned query to show databases
-* TODO Create a canned query to show table-list
+* DONE Create a canned query to show table-list
 * TODO Show header and footer in output
 * TODO Make the header and footer optional
 * TODO Make the DelimitedResultSetRenderer take custom delimiters
@@ -20,3 +20,4 @@
 * DONE Implement custom URL handling for vendors
   Primarily, this is to support sql URLs like sql:sqlite3://test.db,
   which in this case the actual JDBC driver (Xerial) cannot handle.
+* TODO Use ANTLR to build an option parser
