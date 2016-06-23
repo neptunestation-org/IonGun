@@ -1,7 +1,7 @@
 # -*- mode: org; -*-
 #+STARTUP: hidestars
 #+STARTUP: odd
-* TODO Create an HTMLResultSetRenderer
+* DONE Create an HTMLResultSetRenderer
 * TODO Create a TabularResultSetRenderer
 * TODO Create a DelimitedResultSetRenderer
 * TODO Create support for canned queries
