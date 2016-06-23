@@ -12,6 +12,7 @@ public class IonGun {
     static char GS = (char)29;
     static char RS = (char)30;
     static char US = (char)31;
+
     public static void main (String[] args) {
 	RS = (char)10;
 	GS = (char)10;
