@@ -21,26 +21,26 @@ public class IonGun {
 	try {
 	    URL.setURLStreamHandlerFactory(new JDBCURLStreamHandlerFactory());
 	    if (args.length==0) System.exit(255);
-	    ArrayList<String> queries = new ArrayList<>();
+	    ArrayList<String> commands = new ArrayList<>();
 	    String[] p = args[0].split("\\?");
-	    if (p.length>1) queries.add(p[1]);
-	    if (queries.size()>0) for (String q : queries) {
+	    if (p.length>1) commands.add(p[1]);
+	    if (commands.size()>0) for (String q : commands) {
 		    if (q.trim().equals("")) break;
 		    URLConnection c = (new URL(String.format("%s?%s", p[0], q))).openConnection();
-		    c.setRequestProperty("Accept", System.getenv("ACCEPT"));
+		    c.setRequestProperty(JDBCURLConnection.ACCEPT, System.getenv("ACCEPT"));
 		    print(c.getInputStream(), System.out, RS);
 		    System.out.print(GS);
 		    return;}
 	    if (args.length>1) for (int i=1; i<args.length; i++) {
 		    if (args[i].trim().equals("")) break;
 		    URLConnection c = (new URL(String.format("%s?%s", p[0], args[i]))).openConnection();
-		    c.setRequestProperty("Accept", System.getenv("ACCEPT"));
+		    c.setRequestProperty(JDBCURLConnection.ACCEPT, System.getenv("ACCEPT"));
 		    print(c.getInputStream(), System.out, RS);
 		    System.out.print(GS);}
-	    if (args.length==1 && queries.size()==0) for (BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in)); (line=stdin.readLine())!=null;) {
+	    if (args.length==1 && commands.size()==0) for (BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in)); (line=stdin.readLine())!=null;) {
 		    if (line.trim().equals("")) break;
 		    URLConnection c = (new URL(String.format("%s?%s", p[0], line))).openConnection();
-		    c.setRequestProperty("Accept", System.getenv("ACCEPT"));
+		    c.setRequestProperty(JDBCURLConnection.ACCEPT, System.getenv("ACCEPT"));
 		    print(c.getInputStream(), System.out, RS);
 		    System.out.print(GS);}}
 	catch (Exception e) {e.printStackTrace(); System.exit(1);}}
