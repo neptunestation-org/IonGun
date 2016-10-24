@@ -17,14 +17,11 @@ public class IonGun {
 	char US = System.getenv("US")==null ? (char)31 : (char)Integer.parseInt(System.getenv("US"));
 	try {
 	    URL.setURLStreamHandlerFactory(new JDBCURLStreamHandlerFactory());
-	    String line = null;
-	    for (BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in)); (line=stdin.readLine())!=null;) {
-		if (line.trim().equals("")) break;
-		for (String s : args) {
-		    URLConnection c = (new URL(String.format("%s?%s", s, line))).openConnection();
-		    c.setRequestProperty(JDBCURLConnection.ACCEPT, System.getenv(ACCEPT));
-		    print(c.getInputStream(), System.out, RS);
-		    System.out.print(GS);}}}
+	    for (String s : args) {
+		URLConnection c = (new URL(s)).openConnection();
+		c.setRequestProperty(JDBCURLConnection.ACCEPT, System.getenv(ACCEPT));
+		print(c.getInputStream(), System.out, RS);
+		System.out.print(GS);}}
 	catch (Exception e) {e.printStackTrace(); System.exit(1);}}
 
     public static void print (InputStream in, PrintStream out, char delim) throws IOException {
