@@ -10,7 +10,4 @@ public abstract class ResultSetHandlerFactory {
 	for (Iterator<ResultSetHandler> it = loader.iterator(); it.hasNext();) {
 	    ResultSetHandler h = (ResultSetHandler)it.next();
 	    if (h.accepts(mimeType)) return h;}
-	for (Iterator<ResultSetHandler> it = loader.iterator(); it.hasNext();) {
-	    ResultSetHandler h = (ResultSetHandler)it.next();
-	    return h;}
 	throw new IllegalStateException("No ResultSetHandler instances registered");}}
