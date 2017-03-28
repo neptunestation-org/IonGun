@@ -9,19 +9,6 @@ import javax.sql.rowset.*;
 import org.neptunestation.iongun.util.*;
 
 public class JDBCURLStreamHandlerFactory implements URLStreamHandlerFactory {
-    static class DefaultTranslator {
-	public String vendor;
-	public DefaultTranslator (final String v) {vendor = v;}
-	public String translate (final URL u) {return String.format("jdbc:%s://%s%s?%s", vendor, u.getAuthority(), u.getPath(), u.getQuery());}}
-
-    static class SQLiteTranslator extends DefaultTranslator {
-	public SQLiteTranslator (String v) {super(v);}
-	public String translate (URL u) {return String.format("jdbc:%s:%s?%s", vendor, u.getPath(), u.getQuery());}}
-
-    static class AutoCloseableArrayList<E> extends ArrayList<E> implements AutoCloseable {
-	AutoCloseableArrayList (E... items) {super.addAll(Arrays.asList(items));}
-	public void close () {}}
-
     Map<List<String>, DefaultTranslator>
 	vendors = new HashMap<>();
 
@@ -35,20 +22,8 @@ public class JDBCURLStreamHandlerFactory implements URLStreamHandlerFactory {
 	handlers = new ArrayList<>();
 
     public JDBCURLStreamHandlerFactory () {
-	handlers.add(new QueryHandler () {
-	    public boolean accepts (String q) {return "show-tables".equals(q);}
-	    public void handle (Connection c, String q, ResultSetHandler h, PrintStream o) {
-		try (ResultSet r = c.getMetaData().getTables(null, null, null, null)) {
-		    if (r!=null) h.print(r, o);}
-		catch (Exception e) {throw new RuntimeException(e);}}});
-	handlers.add(new QueryHandler () {
-	    public boolean accepts (String q) {return true;}
-	    public void handle (Connection c, String q, ResultSetHandler h, PrintStream o) {
-		try (Statement s = c.createStatement();
-		     AutoCloseableArrayList<Boolean> b = new AutoCloseableArrayList(s.execute(q));
-		     ResultSet r = b.get(0) ? s.getResultSet() : null) {
-		    if (r!=null) h.print(r, o);}
-		catch (Exception e) {throw new RuntimeException(e);}}});
+	handlers.add(new DefaultQueryHandler());
+	handlers.add(new ShowTablesHandler());
 	vendors.put(Arrays.asList("sqlite", "sqlite2"), new SQLiteTranslator("sqlite"));
 	vendors.put(Arrays.asList("sqlite3"), new SQLiteTranslator("sqlite"));
 	vendors.put(Arrays.asList("mysql", "mysqls", "mysqlssl"), new DefaultTranslator("mysql"));
@@ -134,3 +109,32 @@ public class JDBCURLStreamHandlerFactory implements URLStreamHandlerFactory {
 						      u.getQuery()))).openConnection();}
 		    catch (Exception e) {throw new IOException(e);}}};
 	return streamHandlers.get(protocol);}}
+
+class DefaultTranslator {
+    public String vendor;
+    public DefaultTranslator (final String v) {vendor = v;}
+    public String translate (final URL u) {return String.format("jdbc:%s://%s%s?%s", vendor, u.getAuthority(), u.getPath(), u.getQuery());}}
+
+class SQLiteTranslator extends DefaultTranslator {
+    public SQLiteTranslator (String v) {super(v);}
+    public String translate (URL u) {return String.format("jdbc:%s:%s?%s", vendor, u.getPath(), u.getQuery());}}
+
+class AutoCloseableArrayList<E> extends ArrayList<E> implements AutoCloseable {
+    AutoCloseableArrayList (E... items) {super.addAll(Arrays.asList(items));}
+    public void close () {}}
+
+class ShowTablesHandler implements QueryHandler {
+    public boolean accepts (String q) {return "show-tables".equals(q);}
+    public void handle (Connection c, String q, ResultSetHandler h, PrintStream o) {
+	try (ResultSet r = c.getMetaData().getTables(null, null, null, null)) {
+	    if (r!=null) h.print(r, o);}
+	catch (Exception e) {throw new RuntimeException(e);}}}
+
+class DefaultQueryHandler implements QueryHandler {
+    public boolean accepts (String q) {return true;}
+    public void handle (Connection c, String q, ResultSetHandler h, PrintStream o) {
+	try (Statement s = c.createStatement();
+	     AutoCloseableArrayList<Boolean> b = new AutoCloseableArrayList(s.execute(q));
+	     ResultSet r = b.get(0) ? s.getResultSet() : null) {
+	    if (r!=null) h.print(r, o);}
+	catch (Exception e) {throw new RuntimeException(e);}}}
