@@ -16,7 +16,7 @@ public class JDBCURLStreamHandlerFactory implements URLStreamHandlerFactory {
 
     static class SQLiteTranslator extends DefaultTranslator {
 	public SQLiteTranslator (String v) {super(v);}
-	public String translate (URL u) {return String.format("jdbc:%s:%s?%s", vendor, u.getAuthority(), u.getQuery());}}
+	public String translate (URL u) {return String.format("jdbc:%s:%s?%s", vendor, u.getPath(), u.getQuery());}}
 
     static class AutoCloseableArrayList<E> extends ArrayList<E> implements AutoCloseable {
 	AutoCloseableArrayList (E... items) {super.addAll(Arrays.asList(items));}
