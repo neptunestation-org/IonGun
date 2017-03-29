@@ -22,8 +22,8 @@ public class JDBCURLStreamHandlerFactory implements URLStreamHandlerFactory {
 	handlers = new ArrayList<>();
 
     public JDBCURLStreamHandlerFactory () {
-	handlers.add(new DefaultQueryHandler());
 	handlers.add(new ShowTablesHandler());
+	handlers.add(new DefaultQueryHandler());
 	vendors.put(Arrays.asList("sqlite", "sqlite2"), new SQLiteTranslator("sqlite"));
 	vendors.put(Arrays.asList("sqlite3"), new SQLiteTranslator("sqlite"));
 	vendors.put(Arrays.asList("mysql", "mysqls", "mysqlssl"), new DefaultTranslator("mysql"));
