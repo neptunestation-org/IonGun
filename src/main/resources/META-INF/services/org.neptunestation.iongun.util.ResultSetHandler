@@ -1,3 +1,4 @@
+org.neptunestation.iongun.plugins.CSVResultSetRenderer
 org.neptunestation.iongun.plugins.HTMLResultSetRenderer
 org.neptunestation.iongun.plugins.JSONResultSetRenderer
 org.neptunestation.iongun.plugins.MapResultSetHandler

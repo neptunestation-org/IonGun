@@ -10,6 +10,10 @@ import org.neptunestation.iongun.util.*;
 
 public class JDBCURLStreamHandlerFactory implements URLStreamHandlerFactory {
     public static final String ACCEPT = "Accept";
+    public static final String FS = "FS";
+    public static final String GS = "GS";
+    public static final String RS = "RS";
+    public static final String US = "US";
 
     List<JDBCURLStreamHandler>
 	streamHandlers = new ArrayList<>();
@@ -70,9 +74,9 @@ public class JDBCURLStreamHandlerFactory implements URLStreamHandlerFactory {
 			    final PrintStream out = new PrintStream(new PipedOutputStream(in));
 			    new Thread(()->{
 				    try (Connection c = getConnection(u, subname)) {
-					for (QueryHandler q : queryHandlers)
-					    if (q.accepts(u.getQuery())) {
-						q.handle(c, u.getQuery(), ResultSetHandlerFactory.createResultSetHandler(getContentType()), out);
+					for (QueryHandler qh : queryHandlers)
+					    if (qh.accepts(u.getQuery())) {
+						qh.handle(c, u.getQuery(), ResultSetHandlerFactory.createResultSetHandler(getContentType(), properties), out);
 						break;}
 					out.close();}
 				    catch (Exception e) {throw new RuntimeException(e);}}).start();

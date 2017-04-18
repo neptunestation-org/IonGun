@@ -21,6 +21,10 @@ public class IonGun {
 	    for (String s : args) {
 		URLConnection c = (new URL(s)).openConnection();
 		c.setRequestProperty(JDBCURLStreamHandlerFactory.ACCEPT, ACCEPT);
+		c.setRequestProperty(JDBCURLStreamHandlerFactory.FS, String.valueOf(FS));
+		c.setRequestProperty(JDBCURLStreamHandlerFactory.GS, String.valueOf(GS));
+		c.setRequestProperty(JDBCURLStreamHandlerFactory.RS, String.valueOf(RS));
+		c.setRequestProperty(JDBCURLStreamHandlerFactory.US, String.valueOf(US));
 		print(c.getInputStream(), System.out, RS);
 		System.out.print(GS);}}
 	catch (Exception e) {e.printStackTrace(); System.exit(1);}}

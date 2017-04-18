@@ -7,7 +7,11 @@ public abstract class ResultSetHandlerFactory {
     private static ServiceLoader<ResultSetHandler> loader = ServiceLoader.load(ResultSetHandler.class);
 
     public static ResultSetHandler createResultSetHandler (String mimeType) {
+	return createResultSetHandler(mimeType, new HashMap<String, List<String>>());}
+
+    public static ResultSetHandler createResultSetHandler (String mimeType, Map<String, List<String>> properties) {
 	for (Iterator<ResultSetHandler> it = loader.iterator(); it.hasNext();) {
 	    ResultSetHandler h = (ResultSetHandler)it.next();
+	    h.setProperties(properties);
 	    if (h.accepts(mimeType)) return h;}
 	throw new IllegalStateException("No ResultSetHandler instances registered");}}

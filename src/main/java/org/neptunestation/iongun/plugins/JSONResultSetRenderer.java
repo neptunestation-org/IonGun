@@ -5,7 +5,7 @@ import java.sql.*;
 import java.util.*;
 import org.neptunestation.iongun.util.*;
 
-public class JSONResultSetRenderer implements ResultSetHandler {
+public class JSONResultSetRenderer extends AbstractResultSetHandler {
     @Override
     public boolean accepts (String mimeType) {
 	return "text/json".equalsIgnoreCase(mimeType);}

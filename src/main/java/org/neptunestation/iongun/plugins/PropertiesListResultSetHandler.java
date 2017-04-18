@@ -5,7 +5,7 @@ import java.sql.*;
 import java.util.*;
 import org.neptunestation.iongun.util.*;
 
-public class PropertiesListResultSetHandler implements ResultSetHandler {
+public class PropertiesListResultSetHandler extends AbstractResultSetHandler {
     @Override
     public boolean accepts (String mimeType) {
 	return "text/properties-list".equalsIgnoreCase(mimeType);}

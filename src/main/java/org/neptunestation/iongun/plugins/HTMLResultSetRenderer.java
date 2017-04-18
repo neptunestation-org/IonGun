@@ -5,7 +5,7 @@ import java.sql.*;
 import java.util.*;
 import org.neptunestation.iongun.util.*;
 
-public class HTMLResultSetRenderer implements ResultSetHandler {
+public class HTMLResultSetRenderer extends AbstractResultSetHandler {
     @Override
     public boolean accepts (String mimeType) {
 	return "text/html".equalsIgnoreCase(mimeType);}

@@ -5,7 +5,7 @@ import java.sql.*;
 import java.util.*;
 import org.neptunestation.iongun.util.*;
 
-public class MapResultSetHandler implements ResultSetHandler {
+public class MapResultSetHandler extends AbstractResultSetHandler {
     @Override
     public boolean accepts (String mimeType) {
 	return "text/map".equalsIgnoreCase(mimeType);}
