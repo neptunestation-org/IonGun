@@ -34,22 +34,22 @@ public class JDBCURLStreamHandlerFactory implements URLStreamHandlerFactory {
 		public boolean accepts (String protocol) {return "sqlite2".equals(protocol);}
 		@Override
 		protected URLConnection openConnection (final URL u) throws IOException {
-		    return (new URL(String.format("sqlite:%s",schemeSpecificPart))).openConnection();}});
+		    return (new URL(String.format("sqlite:%s", schemeSpecificPart))).openConnection();}});
 	streamHandlers.add(new DefaultURLStreamHandler() {
 		@Override
 		public boolean accepts (String protocol) {return "sqlite3".equals(protocol);}
 		@Override
 		protected URLConnection openConnection (final URL u) throws IOException {
-		    return (new URL(String.format("sqlite:%s",schemeSpecificPart))).openConnection();}});
+		    return (new URL(String.format("sqlite:%s", schemeSpecificPart))).openConnection();}});
 	streamHandlers.add(new DefaultURLStreamHandler() {
 		String subname;
 		@Override
 		public boolean accepts (String protocol) {return "jdbc".equals(protocol);}
 		@Override
 		protected void parseURL (final URL u, final String spec, final int start, final int end) {
-		    int newstart = spec.indexOf(":", start);
-		    subname = spec.substring(start, newstart);
-		    super.parseURL(u, spec, newstart+1, end);}
+		    int delimiter = spec.indexOf(":", start);
+		    subname = spec.substring(start, delimiter);
+		    super.parseURL(u, spec, delimiter+1, end);}
 		@Override
 		protected URLConnection openConnection (final URL u) {
 		    return new URLConnection (u) {

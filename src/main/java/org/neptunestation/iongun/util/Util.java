@@ -12,7 +12,7 @@ public class Util {
     /**
      * Helper class that proxies a ResultSet.  A ResultSet represents
      * a collection of fields, but doesn't provide convenient ways to
-     * treat it as a bona-fide Collecition or Iterable.  This class
+     * treat it as a bona-fide Collection or Iterable.  This class
      * helps facilitate that.
      */
     public static class SQLValue {

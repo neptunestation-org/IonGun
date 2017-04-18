@@ -11,4 +11,4 @@ public abstract class DefaultURLStreamHandler extends JDBCURLStreamHandler {
 	super.parseURL(u, spec, start, end);}
     @Override
     protected URLConnection openConnection (final URL u) throws IOException {
-	return (new URL(String.format("%s",schemeSpecificPart))).openConnection();}}
+	return (new URL(String.format("%s", schemeSpecificPart))).openConnection();}}
