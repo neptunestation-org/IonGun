@@ -9,52 +9,46 @@ import javax.sql.rowset.*;
 import org.neptunestation.iongun.util.*;
 
 public class JDBCURLStreamHandlerFactory implements URLStreamHandlerFactory {
-    Map<List<String>, DefaultTranslator>
-	vendors = new HashMap<>();
-
-    Set<String>
-	allVendors = new HashSet<>();
-
-    Map<String, URLStreamHandler>
-	streamHandlers = new HashMap<>();
+    List<JDBCURLStreamHandler>
+	streamHandlers = new ArrayList<>();
 
     List<QueryHandler>
-	handlers = new ArrayList<>();
+	queryHandlers = new ArrayList<>();
 
     public JDBCURLStreamHandlerFactory () {
-	handlers.add(new ShowTablesHandler());
-	handlers.add(new DefaultQueryHandler());
-	vendors.put(Arrays.asList("sqlite", "sqlite2"), new SQLiteTranslator("sqlite"));
-	vendors.put(Arrays.asList("sqlite3"), new SQLiteTranslator("sqlite"));
-	vendors.put(Arrays.asList("mysql", "mysqls", "mysqlssl"), new DefaultTranslator("mysql"));
-	vendors.put(Arrays.asList("oracle", "ora"), new DefaultTranslator("oracle"));
-	vendors.put(Arrays.asList("postgresql", "pg", "pgsql", "postgres"), new DefaultTranslator("postgresql"));
-	vendors.put(Arrays.asList("postgresqlssl", "pgs", "pgsqlssl", "postgresssl", "pgssl", "postgresqls", "pgsqls", "postgress"), new DefaultTranslator("postgresql"));
-	for (List<String> v : vendors.keySet()) allVendors.addAll(v);
-	streamHandlers.put("sql", new URLStreamHandler () {
-		String vendor;
-		protected DefaultTranslator getTranslator (final String vendor) {
-		    for (Map.Entry<List<String>, DefaultTranslator> e : vendors.entrySet()) if (e.getKey().contains(vendor)) return e.getValue();
-		    return new DefaultTranslator(vendor);}
+	queryHandlers.add(new ShowTablesHandler());
+	queryHandlers.add(new DefaultQueryHandler());
+	streamHandlers.add(new DefaultURLStreamHandler() {
 		@Override
-		protected void parseURL (final URL u, final String spec, int start, final int end) {
-		    int colon = spec.indexOf(":", start);
-		    vendor = spec.substring(start, colon);
-		    String url = "";
-		    start = colon;
-		    super.parseURL(u, spec, start+1, end);}
+		public boolean accepts (String protocol) {return "sql".equals(protocol);}
+	    });
+	streamHandlers.add(new DefaultURLStreamHandler() {
+		@Override
+		public boolean accepts (String protocol) {return "sqlite".equals(protocol);}
 		@Override
 		protected URLConnection openConnection (final URL u) throws IOException {
-		    try {return (new URL(getTranslator(vendor).translate(u))).openConnection();}
-		    catch (Exception e) {throw new IOException(e);}}});
-	streamHandlers.put("jdbc", new URLStreamHandler () {
+		    return (new URL(String.format("jdbc:sqlite:%s?%s", u.getPath(), u.getQuery()))).openConnection();}});
+	streamHandlers.add(new DefaultURLStreamHandler() {
+		@Override
+		public boolean accepts (String protocol) {return "sqlite2".equals(protocol);}
+		@Override
+		protected URLConnection openConnection (final URL u) throws IOException {
+		    return (new URL(String.format("sqlite:%s",schemeSpecificPart))).openConnection();}});
+	streamHandlers.add(new DefaultURLStreamHandler() {
+		@Override
+		public boolean accepts (String protocol) {return "sqlite3".equals(protocol);}
+		@Override
+		protected URLConnection openConnection (final URL u) throws IOException {
+		    return (new URL(String.format("sqlite:%s",schemeSpecificPart))).openConnection();}});
+	streamHandlers.add(new DefaultURLStreamHandler() {
 		String subname;
 		@Override
-		protected void parseURL (final URL u, final String spec, int start, final int end) {
-		    int colon = spec.indexOf(":", start);
-		    subname = spec.substring(start, colon);
-		    start = colon;
-		    super.parseURL(u, spec, start+1, end);}
+		public boolean accepts (String protocol) {return "jdbc".equals(protocol);}
+		@Override
+		protected void parseURL (final URL u, final String spec, final int start, final int end) {
+		    int newstart = spec.indexOf(":", start);
+		    subname = spec.substring(start, newstart);
+		    super.parseURL(u, spec, newstart+1, end);}
 		@Override
 		protected URLConnection openConnection (final URL u) {
 		    return new URLConnection (u) {
@@ -75,7 +69,7 @@ public class JDBCURLStreamHandlerFactory implements URLStreamHandlerFactory {
 			    final PrintStream out = new PrintStream(new PipedOutputStream(in));
 			    new Thread(()->{
 				    try (Connection c = getConnection(u, subname)) {
-					for (QueryHandler q : handlers)
+					for (QueryHandler q : queryHandlers)
 					    if (q.accepts(u.getQuery())) {
 						q.handle(c, u.getQuery(), ResultSetHandlerFactory.createResultSetHandler(getContentType()), out);
 						break;}
@@ -97,27 +91,19 @@ public class JDBCURLStreamHandlerFactory implements URLStreamHandlerFactory {
 
     @Override
     public URLStreamHandler createURLStreamHandler (final String protocol) {
-	if (allVendors.contains(protocol))
-	    return new URLStreamHandler () {
-		@Override
-		protected URLConnection openConnection (final URL u) throws IOException {
-		    try {
-			return (new URL(String.format("sql:%s:%s%s?%s",
-						      u.getProtocol(),
-						      u.getAuthority()==null ? "" : String.format("//%s", u.getAuthority()),
-						      u.getPath(),
-						      u.getQuery()))).openConnection();}
-		    catch (Exception e) {throw new IOException(e);}}};
-	return streamHandlers.get(protocol);}}
+	for (JDBCURLStreamHandler sh : streamHandlers)
+	    if (sh.accepts(protocol)) return sh;
+	return null;}}
 
-class DefaultTranslator {
-    public String vendor;
-    public DefaultTranslator (final String v) {vendor = v;}
-    public String translate (final URL u) {return String.format("jdbc:%s://%s%s?%s", vendor, u.getAuthority(), u.getPath(), u.getQuery());}}
-
-class SQLiteTranslator extends DefaultTranslator {
-    public SQLiteTranslator (String v) {super(v);}
-    public String translate (URL u) {return String.format("jdbc:%s:%s?%s", vendor, u.getPath(), u.getQuery());}}
+abstract class DefaultURLStreamHandler extends JDBCURLStreamHandler {
+    String schemeSpecificPart;
+    @Override
+    protected void parseURL (final URL u, final String spec, final int start, final int end) {
+	schemeSpecificPart = spec.substring(start);
+	super.parseURL(u, spec, start, end);}
+    @Override
+    protected URLConnection openConnection (final URL u) throws IOException {
+	return (new URL(String.format("%s",schemeSpecificPart))).openConnection();}}
 
 class AutoCloseableArrayList<E> extends ArrayList<E> implements AutoCloseable {
     AutoCloseableArrayList (E... items) {super.addAll(Arrays.asList(items));}
