@@ -9,6 +9,8 @@ import javax.sql.rowset.*;
 import org.neptunestation.iongun.util.*;
 
 public class JDBCURLStreamHandlerFactory implements URLStreamHandlerFactory {
+    public static final String ACCEPT = "Accept";
+
     List<JDBCURLStreamHandler>
 	streamHandlers = new ArrayList<>();
 
