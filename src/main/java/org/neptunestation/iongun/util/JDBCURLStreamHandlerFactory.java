@@ -22,8 +22,7 @@ public class JDBCURLStreamHandlerFactory implements URLStreamHandlerFactory {
 	queryHandlers.add(new DefaultQueryHandler());
 	streamHandlers.add(new DefaultURLStreamHandler() {
 		@Override
-		public boolean accepts (String protocol) {return "sql".equals(protocol);}
-	    });
+		public boolean accepts (String protocol) {return "sql".equals(protocol);}});
 	streamHandlers.add(new DefaultURLStreamHandler() {
 		@Override
 		public boolean accepts (String protocol) {return "sqlite".equals(protocol);}
@@ -97,32 +96,12 @@ public class JDBCURLStreamHandlerFactory implements URLStreamHandlerFactory {
 	    if (sh.accepts(protocol)) return sh;
 	return null;}}
 
-abstract class DefaultURLStreamHandler extends JDBCURLStreamHandler {
-    String schemeSpecificPart;
-    @Override
-    protected void parseURL (final URL u, final String spec, final int start, final int end) {
-	schemeSpecificPart = spec.substring(start);
-	super.parseURL(u, spec, start, end);}
-    @Override
-    protected URLConnection openConnection (final URL u) throws IOException {
-	return (new URL(String.format("%s",schemeSpecificPart))).openConnection();}}
-
-class AutoCloseableArrayList<E> extends ArrayList<E> implements AutoCloseable {
-    AutoCloseableArrayList (E... items) {super.addAll(Arrays.asList(items));}
-    public void close () {}}
-
-class ShowTablesHandler implements QueryHandler {
-    public boolean accepts (String q) {return "show-tables".equals(q);}
-    public void handle (Connection c, String q, ResultSetHandler h, PrintStream o) {
-	try (ResultSet r = c.getMetaData().getTables(null, null, null, null)) {
-	    if (r!=null) h.print(r, o);}
-	catch (Exception e) {throw new RuntimeException(e);}}}
-
-class DefaultQueryHandler implements QueryHandler {
-    public boolean accepts (String q) {return true;}
-    public void handle (Connection c, String q, ResultSetHandler h, PrintStream o) {
-	try (Statement s = c.createStatement();
-	     AutoCloseableArrayList<Boolean> b = new AutoCloseableArrayList(s.execute(q));
-	     ResultSet r = b.get(0) ? s.getResultSet() : null) {
-	    if (r!=null) h.print(r, o);}
-	catch (Exception e) {throw new RuntimeException(e);}}}
+// abstract class DefaultURLStreamHandler extends JDBCURLStreamHandler {
+//     String schemeSpecificPart;
+//     @Override
+//     protected void parseURL (final URL u, final String spec, final int start, final int end) {
+// 	schemeSpecificPart = spec.substring(start);
+// 	super.parseURL(u, spec, start, end);}
+//     @Override
+//     protected URLConnection openConnection (final URL u) throws IOException {
+// 	return (new URL(String.format("%s",schemeSpecificPart))).openConnection();}}
