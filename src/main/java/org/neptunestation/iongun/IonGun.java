@@ -18,6 +18,7 @@ public class IonGun {
 	    char US = System.getenv("US")==null ? (char)31 : (char)Integer.parseInt(System.getenv("US"));
 	    String ACCEPT = System.getenv("ACCEPT")==null ? "text/json" : System.getenv("ACCEPT");
 	    URL.setURLStreamHandlerFactory(new JDBCURLStreamHandlerFactory());
+	    boolean first = true;
 	    for (String s : args) {
 		URLConnection c = (new URL(s)).openConnection();
 		c.setRequestProperty(JDBCURLStreamHandlerFactory.ACCEPT, ACCEPT);
@@ -25,8 +26,9 @@ public class IonGun {
 		c.setRequestProperty(JDBCURLStreamHandlerFactory.GS, String.valueOf(GS));
 		c.setRequestProperty(JDBCURLStreamHandlerFactory.RS, String.valueOf(RS));
 		c.setRequestProperty(JDBCURLStreamHandlerFactory.US, String.valueOf(US));
+		if (!first) System.out.print(GS);
 		print(c.getInputStream(), System.out, RS);
-		System.out.print(GS);}}
+		first = false;}}
 	catch (Exception e) {e.printStackTrace(); System.exit(1);}}
 
     public static void print (final InputStream in, final PrintStream out, final char delim) throws IOException {

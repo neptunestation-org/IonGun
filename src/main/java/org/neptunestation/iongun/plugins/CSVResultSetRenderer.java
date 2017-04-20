@@ -16,10 +16,12 @@ public class CSVResultSetRenderer extends AbstractResultSetHandler {
 	    for (String us : properties.get(JDBCURLStreamHandlerFactory.US)) {
 		if (r==null) return;
 		ResultSetMetaData m = r.getMetaData();
-		for (int i=1; i<=m.getColumnCount(); i++)
+		for (int i=1; i<m.getColumnCount(); i++)
 		    out.print(String.format("%s%s", m.getColumnName(i), us));
+		out.print(String.format("%s", m.getColumnName(m.getColumnCount())));
 		out.print(rs);
 		while (r.next()) {
-		    for (int i=1; i<=m.getColumnCount(); i++)
+		    for (int i=1; i<m.getColumnCount(); i++)
 			out.print(String.format("%s%s", r.getString(i), us));
+		    out.print(String.format("%s", r.getString(m.getColumnCount())));
 		    out.print(rs);}}}}
