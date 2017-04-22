@@ -12,17 +12,18 @@ public class IonGun {
 
     public static void main (final String[] args) {
 	try {
-	    char FS = System.getenv("FS")==null ? (char)28 : (char)Integer.parseInt(System.getenv("FS"));
-	    char GS = System.getenv("GS")==null ? (char)29 : (char)Integer.parseInt(System.getenv("GS"));
-	    char RS = System.getenv("RS")==null ? (char)30 : (char)Integer.parseInt(System.getenv("RS"));
-	    char US = System.getenv("US")==null ? (char)31 : (char)Integer.parseInt(System.getenv("US"));
+	    // char FS = System.getenv("FS")==null ? (char)28 : (char)Integer.parseInt(System.getenv("FS"));
+	    char GS = System.getenv("GS")==null ? (char)10 : (char)Integer.parseInt(System.getenv("GS"));
+	    char RS = System.getenv("RS")==null ? (char)10 : (char)Integer.parseInt(System.getenv("RS"));
+	    char US = System.getenv("US")==null ? (char)44 : (char)Integer.parseInt(System.getenv("US"));
 	    String ACCEPT = System.getenv("ACCEPT")==null ? "text/json" : System.getenv("ACCEPT");
+	    if (!ACCEPT.equals("text/csv")) RS=(char)10;
 	    URL.setURLStreamHandlerFactory(new JDBCURLStreamHandlerFactory());
 	    boolean first = true;
 	    for (String s : args) {
 		URLConnection c = (new URL(s)).openConnection();
 		c.setRequestProperty(JDBCURLStreamHandlerFactory.ACCEPT, ACCEPT);
-		c.setRequestProperty(JDBCURLStreamHandlerFactory.FS, String.valueOf(FS));
+		// c.setRequestProperty(JDBCURLStreamHandlerFactory.FS, String.valueOf(FS));
 		c.setRequestProperty(JDBCURLStreamHandlerFactory.GS, String.valueOf(GS));
 		c.setRequestProperty(JDBCURLStreamHandlerFactory.RS, String.valueOf(RS));
 		c.setRequestProperty(JDBCURLStreamHandlerFactory.US, String.valueOf(US));

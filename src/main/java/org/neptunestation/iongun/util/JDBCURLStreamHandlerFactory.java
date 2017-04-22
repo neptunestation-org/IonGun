@@ -60,7 +60,7 @@ public class JDBCURLStreamHandlerFactory implements URLStreamHandlerFactory {
 			Map<String, List<String>> properties;
 			@Override
 			public String getContentType () {
-			    for (String s : properties.get("Accept")) return s;
+			    for (String s : properties.get(ACCEPT)) return s;
 			    return "text/json";}
 			@Override
 			public synchronized void connect () {
@@ -72,14 +72,18 @@ public class JDBCURLStreamHandlerFactory implements URLStreamHandlerFactory {
 			    if (!connected) connect();
 			    final PipedInputStream in = new PipedInputStream();
 			    final PrintStream out = new PrintStream(new PipedOutputStream(in));
-			    new Thread(()->{
+			    Thread t = new Thread(()->{
 				    try (Connection c = getConnection(u, subname)) {
 					for (QueryHandler qh : queryHandlers)
 					    if (qh.accepts(u.getQuery())) {
 						qh.handle(c, u.getQuery(), ResultSetHandlerFactory.createResultSetHandler(getContentType(), properties), out);
 						break;}
 					out.close();}
-				    catch (Exception e) {throw new RuntimeException(e);}}).start();
+				    catch (Exception e) {throw new RuntimeException(e);}});
+			    t.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+				    public void uncaughtException (Thread th, Throwable ex) {
+					out.close();}});
+			    t.start();
 			    return in;}};}});}
 
     public String getUrl (final URL u, final String subname) {
