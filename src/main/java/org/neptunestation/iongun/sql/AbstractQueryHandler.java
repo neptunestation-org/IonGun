@@ -1,11 +1,13 @@
-package org.neptunestation.iongun.util;
+package org.neptunestation.iongun.sql;
 
 import java.io.*;
 import java.sql.*;
 import java.util.*;
+import org.neptunestation.iongun.util.*;
 
-public class DefaultQueryHandler implements QueryHandler {
+public abstract class AbstractQueryHandler implements QueryHandler {
     public boolean accepts (String q) {return true;}
+    public void setProperties (Map<String, List<String>> properties) {}
     public void handle (Connection c, String q, ResultSetHandler h, PrintStream o) {
 	try (Statement s = c.createStatement();
 	     AutoCloseableArrayList<Boolean> b = new AutoCloseableArrayList(s.execute(q));

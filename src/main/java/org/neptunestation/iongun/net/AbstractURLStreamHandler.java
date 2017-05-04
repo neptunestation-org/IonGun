@@ -1,9 +1,9 @@
-package org.neptunestation.iongun.util;
+package org.neptunestation.iongun.net;
 
 import java.io.*;
 import java.net.*;
 
-public abstract class DefaultURLStreamHandler extends JDBCURLStreamHandler {
+public abstract class AbstractURLStreamHandler extends JDBCURLStreamHandler {
     String schemeSpecificPart;
     @Override
     protected void parseURL (final URL u, final String spec, final int start, final int end) {

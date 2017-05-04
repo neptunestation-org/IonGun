@@ -8,7 +8,7 @@ import javax.sql.*;
 /**
  * Utility class that supports new ResultSetRenderer sub-classes
  */
-public class Util {
+public class Misc {
     /**
      * Helper class that proxies a ResultSet.  A ResultSet represents
      * a collection of fields, but doesn't provide convenient ways to

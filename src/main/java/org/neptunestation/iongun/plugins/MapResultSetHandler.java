@@ -3,6 +3,7 @@ package org.neptunestation.iongun.plugins;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
+import org.neptunestation.iongun.sql.*;
 import org.neptunestation.iongun.util.*;
 
 public class MapResultSetHandler extends AbstractResultSetHandler {
@@ -12,7 +13,7 @@ public class MapResultSetHandler extends AbstractResultSetHandler {
 
     @Override
     public void print (ResultSet r, PrintStream out) throws IOException, SQLException {
-	for (Map<String, Util.SQLValue> p : Util.asIterable(r)) out.println(p.toString());}}
+	for (Map<String, Misc.SQLValue> p : Misc.asIterable(r)) out.println(p.toString());}}
 
 
 

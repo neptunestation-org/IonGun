@@ -1,4 +1,4 @@
-package org.neptunestation.iongun.util;
+package org.neptunestation.iongun.net;
 
 import java.io.*;
 import java.net.*;
@@ -6,6 +6,7 @@ import java.sql.*;
 import java.util.*;
 import javax.sql.*;
 import javax.sql.rowset.*;
+import org.neptunestation.iongun.sql.*;
 import org.neptunestation.iongun.util.*;
 
 public class JDBCURLStreamHandlerFactory implements URLStreamHandlerFactory {
@@ -22,30 +23,30 @@ public class JDBCURLStreamHandlerFactory implements URLStreamHandlerFactory {
 	queryHandlers = new ArrayList<>();
 
     public JDBCURLStreamHandlerFactory () {
-	queryHandlers.add(new DefaultQueryHandler());
+	queryHandlers.add(new AbstractQueryHandler(){});
 	queryHandlers.add(new ShowTablesHandler());
-	streamHandlers.add(new DefaultURLStreamHandler() {
+	streamHandlers.add(new AbstractURLStreamHandler() {
 		@Override
 		public boolean accepts (String protocol) {return "sql".equals(protocol);}});
-	streamHandlers.add(new DefaultURLStreamHandler() {
+	streamHandlers.add(new AbstractURLStreamHandler() {
 		@Override
 		public boolean accepts (String protocol) {return "sqlite".equals(protocol);}
 		@Override
 		protected URLConnection openConnection (final URL u) throws IOException {
 		    return (new URL(String.format("jdbc:sqlite:%s?%s", u.getPath(), u.getQuery()))).openConnection();}});
-	streamHandlers.add(new DefaultURLStreamHandler() {
+	streamHandlers.add(new AbstractURLStreamHandler() {
 		@Override
 		public boolean accepts (String protocol) {return "sqlite2".equals(protocol);}
 		@Override
 		protected URLConnection openConnection (final URL u) throws IOException {
 		    return (new URL(String.format("sqlite:%s", schemeSpecificPart))).openConnection();}});
-	streamHandlers.add(new DefaultURLStreamHandler() {
+	streamHandlers.add(new AbstractURLStreamHandler() {
 		@Override
 		public boolean accepts (String protocol) {return "sqlite3".equals(protocol);}
 		@Override
 		protected URLConnection openConnection (final URL u) throws IOException {
 		    return (new URL(String.format("sqlite:%s", schemeSpecificPart))).openConnection();}});
-	streamHandlers.add(new DefaultURLStreamHandler() {
+	streamHandlers.add(new AbstractURLStreamHandler() {
 		String subname;
 		@Override
 		public boolean accepts (String protocol) {return "jdbc".equals(protocol);}

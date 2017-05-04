@@ -5,7 +5,7 @@ import java.net.*;
 import java.sql.*;
 import java.util.*;
 import org.neptunestation.iongun.plugins.*;
-import org.neptunestation.iongun.util.*;
+import org.neptunestation.iongun.net.*;
 
 public class IonGun {
     public static void main (final String[] args) {
