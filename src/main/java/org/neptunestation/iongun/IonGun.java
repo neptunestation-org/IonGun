@@ -8,29 +8,26 @@ import org.neptunestation.iongun.plugins.*;
 import org.neptunestation.iongun.util.*;
 
 public class IonGun {
-    public static final String ACCEPT = "ACCEPT";
-
     public static void main (final String[] args) {
 	try {
-	    // char FS = System.getenv("FS")==null ? (char)28 : (char)Integer.parseInt(System.getenv("FS"));
+	    char FS = System.getenv("FS")==null ? (char)28 : (char)Integer.parseInt(System.getenv("FS"));
 	    char GS = System.getenv("GS")==null ? (char)10 : (char)Integer.parseInt(System.getenv("GS"));
 	    char RS = System.getenv("RS")==null ? (char)10 : (char)Integer.parseInt(System.getenv("RS"));
 	    char US = System.getenv("US")==null ? (char)44 : (char)Integer.parseInt(System.getenv("US"));
-	    String ACCEPT = System.getenv("ACCEPT")==null ? "text/json" : System.getenv("ACCEPT");
-	    if (!ACCEPT.equals("text/csv")) RS=(char)10;
+	    String ACCEPT = System.getenv("ACCEPT")==null ? "text/csv" : System.getenv("ACCEPT");
 	    URL.setURLStreamHandlerFactory(new JDBCURLStreamHandlerFactory());
 	    boolean first = true;
 	    for (String s : args) {
 		URLConnection c = (new URL(s)).openConnection();
 		c.setRequestProperty(JDBCURLStreamHandlerFactory.ACCEPT, ACCEPT);
-		// c.setRequestProperty(JDBCURLStreamHandlerFactory.FS, String.valueOf(FS));
+		c.setRequestProperty(JDBCURLStreamHandlerFactory.FS, String.valueOf(FS));
 		c.setRequestProperty(JDBCURLStreamHandlerFactory.GS, String.valueOf(GS));
 		c.setRequestProperty(JDBCURLStreamHandlerFactory.RS, String.valueOf(RS));
 		c.setRequestProperty(JDBCURLStreamHandlerFactory.US, String.valueOf(US));
 		if (!first) System.out.print(GS);
 		print(c.getInputStream(), System.out, RS);
 		first = false;}}
-	catch (Exception e) {e.printStackTrace(); System.exit(1);}}
+	catch (Exception e) {throw new RuntimeException(e);}}
 
     public static void print (final InputStream in, final PrintStream out, final char delim) throws IOException {
 	BufferedReader br = new BufferedReader(new InputStreamReader(in));

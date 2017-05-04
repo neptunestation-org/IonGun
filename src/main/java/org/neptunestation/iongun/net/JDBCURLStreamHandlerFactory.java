@@ -22,8 +22,8 @@ public class JDBCURLStreamHandlerFactory implements URLStreamHandlerFactory {
 	queryHandlers = new ArrayList<>();
 
     public JDBCURLStreamHandlerFactory () {
-	queryHandlers.add(new ShowTablesHandler());
 	queryHandlers.add(new DefaultQueryHandler());
+	queryHandlers.add(new ShowTablesHandler());
 	streamHandlers.add(new DefaultURLStreamHandler() {
 		@Override
 		public boolean accepts (String protocol) {return "sql".equals(protocol);}});
@@ -61,7 +61,7 @@ public class JDBCURLStreamHandlerFactory implements URLStreamHandlerFactory {
 			@Override
 			public String getContentType () {
 			    for (String s : properties.get(ACCEPT)) return s;
-			    return "text/json";}
+			    return "text/csv";}
 			@Override
 			public synchronized void connect () {
 			    properties = getRequestProperties();
