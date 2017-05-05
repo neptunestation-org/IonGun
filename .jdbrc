@@ -1,5 +1,3 @@
-# -*- comment: #; -*-
-
 use src/main/java
 stop in org.neptunestation.iongun.net.JDBCURLStreamHandlerFactory.createURLStreamHandler
 run org.neptunestation.iongun.IonGun "sql:sqlite3:test.db?select * from person"
