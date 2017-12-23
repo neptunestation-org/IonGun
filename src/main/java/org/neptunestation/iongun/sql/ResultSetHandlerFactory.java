@@ -11,7 +11,7 @@ public abstract class ResultSetHandlerFactory {
 
     public static ResultSetHandler createResultSetHandler (String mimeType, Map<String, List<String>> properties) {
 	for (Iterator<ResultSetHandler> it = loader.iterator(); it.hasNext();) {
-	    ResultSetHandler h = (ResultSetHandler)it.next();
+	    ResultSetHandler h = it.next();
 	    h.setProperties(properties);
 	    if (h.accepts(mimeType)) return h;}
-	throw new IllegalStateException("No ResultSetHandler instances registered");}}
+	throw new IllegalStateException(String.format("No ResultSetHandler instances registered for MimeType:  %s", mimeType));}}

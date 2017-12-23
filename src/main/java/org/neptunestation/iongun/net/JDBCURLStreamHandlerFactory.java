@@ -58,16 +58,13 @@ public class JDBCURLStreamHandlerFactory implements URLStreamHandlerFactory {
 		@Override
 		protected URLConnection openConnection (final URL u) {
 		    return new URLConnection (u) {
-			Map<String, List<String>> properties;
 			@Override
 			public String getContentType () {
-			    for (String s : properties.get(ACCEPT)) return s;
+			    for (String s : getRequestProperties().get(ACCEPT)) return s;
+			    System.out.println("CSV!");
 			    return "text/csv";}
 			@Override
-			public synchronized void connect () {
-			    properties = getRequestProperties();
-			    try (Connection c = getConnection(u, subname)) {connected = true;}
-			    catch (Exception e) {throw new RuntimeException(e);}}
+			public synchronized void connect () {}
 			@Override
 			public InputStream getInputStream () throws IOException {
 			    if (!connected) connect();
@@ -77,12 +74,13 @@ public class JDBCURLStreamHandlerFactory implements URLStreamHandlerFactory {
 				    try (Connection c = getConnection(u, subname)) {
 					for (QueryHandler qh : queryHandlers)
 					    if (qh.accepts(u.getQuery())) {
-						qh.handle(c, u.getQuery(), ResultSetHandlerFactory.createResultSetHandler(getContentType(), properties), out);
+						qh.handle(c, u.getQuery(), ResultSetHandlerFactory.createResultSetHandler(getContentType(), getRequestProperties()), out);
 						break;}
 					out.close();}
 				    catch (Exception e) {throw new RuntimeException(e);}});
 			    t.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
 				    public void uncaughtException (Thread th, Throwable ex) {
+					ex.printStackTrace(out);
 					out.close();}});
 			    t.start();
 			    return in;}};}});}

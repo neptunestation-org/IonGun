@@ -11,7 +11,7 @@ public abstract class QueryHandlerFactory {
 
     public static QueryHandler createQueryHandler (String mimeType, Map<String, List<String>> properties) {
 	for (Iterator<QueryHandler> it = loader.iterator(); it.hasNext();) {
-	    QueryHandler h = (QueryHandler)it.next();
+	    QueryHandler h = it.next();
 	    h.setProperties(properties);
 	    if (h.accepts(mimeType)) return h;}
 	throw new IllegalStateException("No QueryHandler instances registered");}}

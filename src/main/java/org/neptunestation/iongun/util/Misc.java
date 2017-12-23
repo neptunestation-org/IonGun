@@ -65,13 +65,13 @@ public class Misc {
     /**
      * Adapt a ResultSet as an Iterable of String-to-SQLValue Maps.
      */
+    @SuppressWarnings("unchecked")
     public static Iterable<Map<String, SQLValue>> asIterable (final ResultSet r) throws SQLException {
 	if (r instanceof RowSet) ((RowSet)r).execute();
-	return
-	    (Iterable<Map<String, SQLValue>>)
+	return (Iterable<Map<String, SQLValue>>)
 	    Proxy
 	    .newProxyInstance(Iterable.class.getClassLoader(),
-			      new Class[] {Iterable.class},
+			      new Class<?>[] {Iterable.class},
 			      new InvocationHandler() {
 				  @Override public Object invoke (Object proxy, Method method, Object[] args) throws Exception {
 				      if (method.getDeclaringClass().equals(Iterable.class) && method.getName().equals("iterator"))
@@ -94,3 +94,5 @@ public class Misc {
 						  catch (Exception e) {throw new IllegalStateException(e);}}
 					      @Override public void remove () {throw new UnsupportedOperationException();}};
 				      return method.invoke(args);}});}}
+
+
