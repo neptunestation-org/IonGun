@@ -9,19 +9,45 @@ import javax.sql.rowset.*;
 import org.neptunestation.iongun.sql.*;
 import org.neptunestation.iongun.util.*;
 
+/**
+ * <code>JDBCURLStreamHandlerFactory</code> is a {@link URLStreamHandlerFactory} for JDBC URLs.
+ *
+ */
 public class JDBCURLStreamHandlerFactory implements URLStreamHandlerFactory {
+    /**
+     * HTTP "Accept" header name
+     */
     public static final String ACCEPT = "Accept";
+
+    /**
+     * File separator
+     */
     public static final String FS = "FS";
+
+    /**
+     * Group separator
+     */
     public static final String GS = "GS";
+
+    /**
+     * Record separator
+     */
     public static final String RS = "RS";
+
+    /**
+     * Unit separator
+     */
     public static final String US = "US";
 
-    List<JDBCURLStreamHandler>
+    protected List<JDBCURLStreamHandler>
 	streamHandlers = new ArrayList<>();
 
-    List<QueryHandler>
+    protected List<QueryHandler>
 	queryHandlers = new ArrayList<>();
 
+    /**
+     * No-argument constructor
+     */
     public JDBCURLStreamHandlerFactory () {
 	queryHandlers.add(new AbstractQueryHandler(){});
 	queryHandlers.add(new ShowTablesHandler());
@@ -85,14 +111,14 @@ public class JDBCURLStreamHandlerFactory implements URLStreamHandlerFactory {
 			    t.start();
 			    return in;}};}});}
 
-    public String getUrl (final URL u, final String subname) {
+    protected String getUrl (final URL u, final String subname) {
 	return String.format("%s:%s:%s%s", "jdbc", subname,
 			     u.getHost().equals("") ? "" :
 			     u.getPort()<0 ? String.format("//%s", u.getHost()) :
 			     String.format("//%s:%s", u.getHost(), u.getPort()),
 			     u.getPath());}
 
-    public Connection getConnection (final URL u, final String subname) throws SQLException {
+    protected Connection getConnection (final URL u, final String subname) throws SQLException {
 	return u.getUserInfo()==null ?
 	    DriverManager.getConnection(getUrl(u, subname)) :
 	    DriverManager.getConnection(getUrl(u, subname), u.getUserInfo().split(":")[0], u.getUserInfo().split(":")[1]);}

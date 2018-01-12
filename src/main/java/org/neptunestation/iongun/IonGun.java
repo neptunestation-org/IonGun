@@ -42,8 +42,18 @@ import org.neptunestation.iongun.net.*;
  * within them are delimite using the <em>record
  * separator</em> and <em>unit separator</em>.  Output is
  * terminated by the <em>file separator</em>.</p>
+ *
+ * @author David A. Ventimiglia
+ * @version 1, 12-24-2017
+ * @since 1
  */
 public class IonGun {
+
+    /**
+     * Main entry point method
+     *
+     * @param args string array of dburls
+     */
     public static void main (final String[] args) {
 	try {
 	    char FS = System.getenv("FS")==null ? (char)28 : (char)Integer.parseInt(System.getenv("FS"));
@@ -66,7 +76,7 @@ public class IonGun {
 	    System.out.print(FS);}
 	catch (Exception e) {throw new RuntimeException(e);}}
 
-    public static void print (final InputStream in, final PrintStream out, final char delim) throws IOException {
+    private static void print (final InputStream in, final PrintStream out, final char delim) throws IOException {
 	BufferedReader br = new BufferedReader(new InputStreamReader(in));
 	String l;
 	while ((l = br.readLine())!=null) {out.print(l); out.print(delim);}}}
