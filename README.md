@@ -1,29 +1,23 @@
 # README #
 
-This README would normally document whatever steps are necessary to get your application up and running.
-
 ### What is this repository for? ###
 
-* Quick summary
-* Version
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
+IonGun is an application class that queries a database and emits the results.
 
 ### How do I get set up? ###
 
-* Summary of set up
-* Configuration
-* Dependencies
-* Database configuration
-* How to run tests
-* Deployment instructions
+Usage:
 
-### Contribution guidelines ###
+	[OPTIONS] java org.neptunestation.iongun.IonGun <DBURL>...
 
-* Writing tests
-* Code review
-* Other guidelines
+Options:
+
+* FS - file separator (default: INFORMATION SEPARATOR FOUR)
+* GS - group separator (default: INFORMATION SEPARATOR THREE)
+* RS - record separator (default: INFORMATION SEPARATOR TWO)
+* unit separator (default: INFORMATION SEPARATOR ONE)
 
 ### Who do I talk to? ###
 
-* Repo owner or admin
-* Other community or team contact
+* David A. Ventimiglia <davidaventimiglia@neptunestation.com>
+
