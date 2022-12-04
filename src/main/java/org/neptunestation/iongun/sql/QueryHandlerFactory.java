@@ -1,7 +1,6 @@
 package org.neptunestation.iongun.sql;
 
 import java.util.*;
-import java.util.concurrent.*;
 
 public abstract class QueryHandlerFactory {
     private static ServiceLoader<QueryHandler> loader = ServiceLoader.load(QueryHandler.class);

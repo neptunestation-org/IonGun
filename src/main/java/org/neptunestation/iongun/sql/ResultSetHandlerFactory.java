@@ -1,7 +1,6 @@
 package org.neptunestation.iongun.sql;
 
 import java.util.*;
-import java.util.concurrent.*;
 
 public abstract class ResultSetHandlerFactory {
     private static ServiceLoader<ResultSetHandler> loader = ServiceLoader.load(ResultSetHandler.class);

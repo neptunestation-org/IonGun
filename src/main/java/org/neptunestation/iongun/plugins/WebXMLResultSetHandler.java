@@ -2,11 +2,8 @@ package org.neptunestation.iongun.plugins;
 
 import java.io.*;
 import java.sql.*;
-import java.util.*;
-import javax.sql.*;
 import javax.sql.rowset.*;
 import org.neptunestation.iongun.sql.*;
-import org.neptunestation.iongun.util.*;
 
 public class WebXMLResultSetHandler extends AbstractResultSetHandler {
     @Override

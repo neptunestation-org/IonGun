@@ -4,10 +4,8 @@ import java.io.*;
 import java.net.*;
 import java.sql.*;
 import java.util.*;
-import javax.sql.*;
-import javax.sql.rowset.*;
 import org.neptunestation.iongun.sql.*;
-import org.neptunestation.iongun.util.*;
+import org.neptunestation.iongun.plugins.*;
 
 /**
  * <code>JDBCURLStreamHandlerFactory</code> is a {@link URLStreamHandlerFactory} for JDBC URLs.

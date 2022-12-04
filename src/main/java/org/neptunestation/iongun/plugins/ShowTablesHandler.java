@@ -1,10 +1,9 @@
-package org.neptunestation.iongun.util;
+package org.neptunestation.iongun.plugins;
 
 import java.io.*;
 import java.sql.*;
 import java.util.*;
 import org.neptunestation.iongun.sql.*;
-import org.neptunestation.iongun.util.*;
 
 public class ShowTablesHandler implements QueryHandler {
     public boolean accepts (String q) {return "show-tables".equals(q);}

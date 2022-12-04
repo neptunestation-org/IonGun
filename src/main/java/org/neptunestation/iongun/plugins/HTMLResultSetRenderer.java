@@ -2,9 +2,7 @@ package org.neptunestation.iongun.plugins;
 
 import java.io.*;
 import java.sql.*;
-import java.util.*;
 import org.neptunestation.iongun.sql.*;
-import org.neptunestation.iongun.util.*;
 
 public class HTMLResultSetRenderer extends AbstractResultSetHandler {
     @Override

@@ -5,3 +5,6 @@ GPATH
 GRTAGS
 GTAGS
 .meghanada
+/.classpath
+/.project
+/.settings/
