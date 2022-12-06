@@ -6,12 +6,10 @@ import org.neptunestation.iongun.net.*;
 import org.neptunestation.iongun.sql.*;
 
 public class CSVResultSetRenderer extends AbstractResultSetHandler {
-    @Override
-    public boolean accepts (String mimeType) {
+    @Override public boolean accepts (String mimeType) {
 	return "text/csv".equalsIgnoreCase(mimeType);}
 
-    @Override
-    public void print (ResultSet r, PrintStream out) throws IOException, SQLException {
+    @Override public void print (ResultSet r, PrintStream out) throws IOException, SQLException {
 	for (String rs : properties.get(JDBCURLStreamHandlerFactory.RS))
 	    for (String us : properties.get(JDBCURLStreamHandlerFactory.US)) {
 		if (r==null) return;

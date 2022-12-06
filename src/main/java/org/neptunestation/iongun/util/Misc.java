@@ -65,8 +65,7 @@ public class Misc {
     /**
      * Adapt a ResultSet as an Iterable of String-to-SQLValue Maps.
      */
-    @SuppressWarnings("unchecked")
-    public static Iterable<Map<String, SQLValue>> asIterable (final ResultSet r) throws SQLException {
+    @SuppressWarnings("unchecked") public static Iterable<Map<String, SQLValue>> asIterable (final ResultSet r) throws SQLException {
 	if (r instanceof RowSet) ((RowSet)r).execute();
 	return (Iterable<Map<String, SQLValue>>)
 	    Proxy

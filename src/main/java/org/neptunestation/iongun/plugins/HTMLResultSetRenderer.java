@@ -5,12 +5,10 @@ import java.sql.*;
 import org.neptunestation.iongun.sql.*;
 
 public class HTMLResultSetRenderer extends AbstractResultSetHandler {
-    @Override
-    public boolean accepts (String mimeType) {
+    @Override public boolean accepts (String mimeType) {
 	return "text/html".equalsIgnoreCase(mimeType);}
 
-    @Override
-    public void print (ResultSet r, PrintStream out) throws IOException, SQLException {
+    @Override public void print (ResultSet r, PrintStream out) throws IOException, SQLException {
 	out.println("<table border=\"1\">");
 	if (r==null) return;
 	ResultSetMetaData m = r.getMetaData();

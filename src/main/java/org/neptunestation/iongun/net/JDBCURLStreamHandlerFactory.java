@@ -50,47 +50,33 @@ public class JDBCURLStreamHandlerFactory implements URLStreamHandlerFactory {
 	queryHandlers.add(new AbstractQueryHandler(){});
 	queryHandlers.add(new ShowTablesHandler());
 	streamHandlers.add(new AbstractURLStreamHandler() {
-		@Override
-		public boolean accepts (String protocol) {return "sql".equals(protocol);}});
+		@Override public boolean accepts (String protocol) {return "sql".equals(protocol);}});
 	streamHandlers.add(new AbstractURLStreamHandler() {
-		@Override
-		public boolean accepts (String protocol) {return "sqlite".equals(protocol);}
-		@Override
-		protected URLConnection openConnection (final URL u) throws IOException {
+		@Override public boolean accepts (String protocol) {return "sqlite".equals(protocol);}
+		@Override protected URLConnection openConnection (final URL u) throws IOException {
 		    return (new URL(String.format("jdbc:sqlite:%s?%s", u.getPath(), u.getQuery()))).openConnection();}});
 	streamHandlers.add(new AbstractURLStreamHandler() {
-		@Override
-		public boolean accepts (String protocol) {return "sqlite2".equals(protocol);}
-		@Override
-		protected URLConnection openConnection (final URL u) throws IOException {
+		@Override public boolean accepts (String protocol) {return "sqlite2".equals(protocol);}
+		@Override protected URLConnection openConnection (final URL u) throws IOException {
 		    return (new URL(String.format("sqlite:%s", schemeSpecificPart))).openConnection();}});
 	streamHandlers.add(new AbstractURLStreamHandler() {
-		@Override
-		public boolean accepts (String protocol) {return "sqlite3".equals(protocol);}
-		@Override
-		protected URLConnection openConnection (final URL u) throws IOException {
+		@Override public boolean accepts (String protocol) {return "sqlite3".equals(protocol);}
+		@Override protected URLConnection openConnection (final URL u) throws IOException {
 		    return (new URL(String.format("sqlite:%s", schemeSpecificPart))).openConnection();}});
 	streamHandlers.add(new AbstractURLStreamHandler() {
 		String subname;
-		@Override
-		public boolean accepts (String protocol) {return "jdbc".equals(protocol);}
-		@Override
-		protected void parseURL (final URL u, final String spec, final int start, final int end) {
+		@Override public boolean accepts (String protocol) {return "jdbc".equals(protocol);}
+		@Override protected void parseURL (final URL u, final String spec, final int start, final int end) {
 		    int delimiter = spec.indexOf(":", start);
 		    subname = spec.substring(start, delimiter);
 		    super.parseURL(u, spec, delimiter+1, end);}
-		@Override
-		protected URLConnection openConnection (final URL u) {
+		@Override protected URLConnection openConnection (final URL u) {
 		    return new URLConnection (u) {
-			@Override
-			public String getContentType () {
+			@Override public String getContentType () {
 			    for (String s : getRequestProperties().get(ACCEPT)) return s;
-			    System.out.println("CSV!");
 			    return "text/csv";}
-			@Override
-			public synchronized void connect () {}
-			@Override
-			public InputStream getInputStream () throws IOException {
+			@Override public synchronized void connect () {}
+			@Override public InputStream getInputStream () throws IOException {
 			    if (!connected) connect();
 			    final PipedInputStream in = new PipedInputStream();
 			    final PrintStream out = new PrintStream(new PipedOutputStream(in));
